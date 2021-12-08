@@ -7,7 +7,7 @@ on:
         - cron: '0 0 * * *'
 jobs:
     build:
-        name: Publish latest
+        name: Build latest
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the Git repository
