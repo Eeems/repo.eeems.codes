@@ -1,7 +1,7 @@
 import sys
 import argparse
-from ..modules import package
-from ..modules import util
+import package
+import util
 
 parser = argparse.ArgumentParser(
     prog="build", description="build packages", add_help=True
@@ -16,7 +16,7 @@ parser.add_argument(
 
 def main(argv):
     main.args = parser.parse_args(argv)
-    with util.popd(main.args.packagesdir):
+    with util.pushd(main.args.packagesdir):
         pass
 
 
