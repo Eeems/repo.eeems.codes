@@ -58,6 +58,9 @@ class Package(BaseConfig):
     def depends(self):
         return [PackageConfig.packages[x] for x in self._data.get("depends", [])]
 
+    def build(self):
+        pass
+
 
 class PackageConfig(BaseConfig):
     packages = {}
