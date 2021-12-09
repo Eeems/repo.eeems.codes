@@ -1,7 +1,10 @@
 import sys
 import argparse
-import package
 import util
+import glob
+
+
+from package import PackageConfig
 
 parser = argparse.ArgumentParser(
     prog="build", description="build packages", add_help=True
@@ -16,8 +19,19 @@ parser.add_argument(
 
 def main(argv):
     main.args = parser.parse_args(argv)
+    packages = {}
     with util.pushd(main.args.packagesdir):
-        pass
+        for path in glob.iglob("*.yml"):
+            try:
+                package = PackageConfig(path)
+                package.validate()
+                if package.name in packages:
+                    raise Exception(f"Package {package.name} already defined")
+
+                packages[package.name] = package
+
+            except Exception as ex:
+                print(ex)
 
 
 if __name__ == "__main__":

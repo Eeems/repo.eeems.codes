@@ -1,4 +1,5 @@
 import yaml
+import os
 
 
 class ConfigException(Exception):
@@ -19,3 +20,15 @@ class BaseConfig(object):
 class PackageConfig(BaseConfig):
     def __init__(self, path):
         self.path = path
+        with open(self.path) as f:
+            self._data = yaml.load(f, Loader=yaml.SafeLoader) or {}
+
+        if "name" not in self._data:
+            self._data["name"] = os.path.splitext(os.path.basename(path))[0]
+
+    @property
+    def name(self):
+        return self._data["name"]
+
+    def validate(self):
+        pass
