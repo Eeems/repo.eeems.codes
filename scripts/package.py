@@ -19,12 +19,15 @@ class BaseConfig(object):
 
 class PackageConfig(BaseConfig):
     def __init__(self, path):
-        self.path = path
+        self.path = os.path.realpath(path)
         with open(self.path) as f:
             self._data = yaml.load(f, Loader=yaml.SafeLoader) or {}
 
         if "name" not in self._data:
             self._data["name"] = os.path.splitext(os.path.basename(path))[0]
+
+    def __repr__(self):
+        return f"<PackageConfig {self.name}>"
 
     @property
     def name(self):

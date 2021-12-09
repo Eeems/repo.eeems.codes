@@ -33,6 +33,8 @@ def main(argv):
             except Exception as ex:
                 print(ex)
 
+    print(packages)
+
 
 if __name__ == "__main__":
     try:
