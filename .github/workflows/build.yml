@@ -22,5 +22,5 @@ jobs:
               with:
                 cache: 'pip'
             - run: pip install -r requirements.txt
-            - name: Build packages
-              run: python ./scripts/build.py packages
+            - name: Build repos
+              run: python ./scripts/build.py repos
