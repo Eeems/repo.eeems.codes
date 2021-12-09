@@ -1,6 +1,6 @@
+- name: mingw-w64-headers-bootstrap
 - name: mingw-w64-gcc-base
   depends:
     - mingw-w64-headers-bootstrap
   script: |
     sudo sed -i 's|-Werror=format-security||g' /etc/makepkg.conf
-- name: mingw-w64-headers-bootstrap

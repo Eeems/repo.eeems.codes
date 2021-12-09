@@ -1,0 +1,15 @@
+- name: pop-icon-theme-bin
+- name: ttf-roboto-slab
+- name: pop-gtk-theme-bin
+  depends:
+    - ttf-roboto-slab
+- name: pop-sound-theme-bin
+- name: pop-session-bin
+- name: pop-gnome-shell-theme-bin
+  image: registry.eeems.codes/archlinux:gnome
+  depends:
+    - pop-gtk-theme-bin
+    - pop-icon-theme-bin
+    - pop-session-bin
+    - pop-sound-theme-bin
+    - ttf-roboto-slab

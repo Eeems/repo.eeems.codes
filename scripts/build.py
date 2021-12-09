@@ -30,8 +30,8 @@ def main(argv):
                 except Exception:
                     print(f"Failed handling {packagePath}: {format_exc(0).strip()}")
 
+    print(f"Packages: {PackageConfig.packages}")
     PackageConfig.validate()
-    print(PackageConfig.packages)
 
 
 if __name__ == "__main__":
