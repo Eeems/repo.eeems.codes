@@ -1,5 +1,4 @@
 git: ssh://git@git.eeems.codes:3022/Eeems/3ds-libccd.git
-private: true
 image: registry.eeems.codes/archlinux:devkitpro
 script: |
   export DEVKITPRO=/opt/devkitpro

@@ -54,10 +54,6 @@ class Package(BaseConfig):
         return self._data.get("git", f"https://aur.archlinux.org/{self.name}.git")
 
     @property
-    def private(self):
-        return self._data.get("private", False)
-
-    @property
     def name(self):
         return self._data["name"]
 
@@ -113,14 +109,6 @@ class Package(BaseConfig):
             env[
                 "GIT_SSH_COMMAND"
             ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-            if (
-                self.private
-                and "SSH_KEY" in env
-                and not util.run("ssh-add", stdin=io.StringIO(env["SSH_KEY"]))
-            ):
-                print("  Failed to import ssh key")
-                return
-
             if not util.run(
                 ["git", "clone", "--depth=1", self.git, os.path.join(tmpdirname)], env
             ):

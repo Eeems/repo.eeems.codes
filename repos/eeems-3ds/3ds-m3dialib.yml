@@ -1,5 +1,4 @@
 git: ssh://git@gogs:3022/Eeems/3ds-m3dialib.git
-private: true
 ignore: true
 image: registry.eeems.codes/archlinux:devkitpro
 script: |
