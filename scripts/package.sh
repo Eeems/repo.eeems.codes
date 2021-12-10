@@ -9,6 +9,20 @@ error(){
     echo -e "\033[0;31m$@\033[0m";
   fi
 }
+warning(){
+  if [[ "$GITHUB_ACTIONS" != "" ]];then
+    echo -e "::warning file=scripts/package.sh::$@"
+  else
+    echo -e "\033[1;33m$@\033[0m";
+  fi
+}
+debug(){
+  if [[ "$GITHUB_ACTIONS" != "" ]];then
+    echo -e "::debug file=scripts/package.sh::$@"
+  elif [[ "$VERBOSE" != "" ]];then
+    echo -e "$@";
+  fi
+}
 function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
@@ -30,19 +44,25 @@ if ! command chronic &> /dev/null;then
     }
   fi
 fi
+function _chronic(){
+  if [[ "$VERBOSE" != "" ]];then
+    return "$@"
+  fi
+  return chronic "$@"
+}
 shopt -s dotglob nullglob
 log "Importing keyring..."
 if [[ "$GPG_PRIVKEY" == "" ]];then
   error "GPG key missing from env"
   exit 1
 fi
-chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
+_chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
 log "Updating..."
-chronic yay -Sy --cachedir ./cache  --noconfirm || true
+_chronic yay -Sy --cachedir ./cache  --noconfirm || true
 command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache rsync
 if compgen -G "packages-*/*.pkg.tar.*" > /dev/null;then
   log "Installing defined dependencies..."
-  chronic yay -U --cachedir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
+  _chronic yay -U --cachedir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
 fi
 if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo mkdir tmp
@@ -51,7 +71,7 @@ if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo ln -s ../pkg pkg
   sudo ln -s ../cache cache
   log "Running setup script..."
-  chronic bash -c "$SETUP_SCRIPT"
+  _chronic bash -c "$SETUP_SCRIPT"
   popd > /dev/null
 fi
 log "Installing PKGBUILD dependencies..."
@@ -61,12 +81,12 @@ checkdepends=()
 validpgpkeys=()
 source pkg/PKGBUILD
 deps=( "${depends[@]}" "${makedepends[@]}" "${checkdepends[@]}" )
-pacman --deptest "${deps[@]}" | xargs -r chronic yay -S --cachedir ./cache  --noconfirm
+pacman --deptest "${deps[@]}" | xargs -r _chronic yay -S --cachedir ./cache  --noconfirm
 arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
   for (( i=0; i<${arraylength}; i++ ));do
-    chronic { gpg --recv-key "${validpgpkeys[$i]}" ||
+    _chronic { gpg --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver pool.sks-keyservers.net --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver keyserver.ubuntu.com --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver pgp.mit.edu --recv-key "${validpgpkeys[$i]}" ||
@@ -80,11 +100,11 @@ if ! namcap -i pkg/PKGBUILD;then
 fi
 log "Building package..."
 pushd pkg > /dev/null
-chronic makepkg -f --noconfirm --sign
+_chronic makepkg -f --noconfirm --sign
 if [[ "x$CLEANUP_SCRIPT" != "x" ]];then
   log "Running cleanup script..."
   pushd . > /dev/null
-  chronic bash -c "$CLEANUP_SCRIPT"
+  _chronic bash -c "$CLEANUP_SCRIPT"
   popd > /dev/null
 fi
 popd > /dev/null
@@ -92,5 +112,5 @@ sudo chown notroot:notroot packages
 log "Checking packages..."
 ls pkg/*.pkg.tar.* | while read pkgfile;do namcap -i "$pkgfile" || true;done
 log "Exporting packages..."
-chronic rsync -Pcuav pkg/*.pkg.tar.* packages
+_chronic rsync -Pcuav pkg/*.pkg.tar.* packages
 log "Done with package"

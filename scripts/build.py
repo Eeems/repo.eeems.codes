@@ -23,6 +23,7 @@ parser.add_argument("package", help="Build a specific package", nargs="?", defau
 parser.add_argument(
     "--stats", action="store_true", help="Show information about the repos"
 )
+parser.add_argument("--verbose", action="store_true", help="Show verbose logs")
 
 
 def main(argv):
@@ -39,6 +40,9 @@ def main(argv):
         os.mkdir(os.environ["WORKDIR"])
 
     main.args = parser.parse_args(argv)
+    if main.args.verbose:
+        os.environ["VERBOSE"] = "1"
+
     t = util.term()
     with util.pushd(main.args.reposdir):
         for repo in glob.iglob("*/"):

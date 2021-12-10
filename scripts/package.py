@@ -117,14 +117,18 @@ class Package(BaseConfig):
             "GIT_SSH_COMMAND"
         ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
         if not util.run(
-            ["git", "clone", "--depth=1", self.git, tmpdirname], env, chronic=True
+            ["git", "clone", "--depth=1", self.git, tmpdirname],
+            env,
+            chronic="VERBOSE" not in os.environ,
         ):
             print(t.red("  Failed to checkout repo"))
             return
 
         if self.image not in Package.__pulled_images:
             Package.__pulled_images.append(self.image)
-            if not util.run(["docker", "pull", self.image], chronic=True):
+            if not util.run(
+                ["docker", "pull", self.image], chronic="VERBOSE" not in os.environ
+            ):
                 print(t.red("  Failed to pull image"))
                 return
 
@@ -141,6 +145,8 @@ class Package(BaseConfig):
             "GPGKEY",
             "-e",
             "GITHUB_ACTIONS",
+            "-e",
+            "VERBOSE",
         ]
         if self.script is not None:
             args + ["-e", "SETUP_SCRIPT"]
@@ -162,7 +168,10 @@ class Package(BaseConfig):
         if not os.environ.get("DOCKER_PRUNE", False):
             return
 
-        if not util.run(["docker", "system", "prune", "--force"], chronic=True):
+        if not util.run(
+            ["docker", "system", "prune", "--force"],
+            chronic="VERBOSE" not in os.environ,
+        ):
             print(t.red("  Failed prune"))
 
 
