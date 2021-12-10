@@ -222,3 +222,7 @@ class PackageConfig(BaseConfig):
     def publish():
         for repo in PackageConfig.repos.values():
             repo.publish()
+
+    @staticmethod
+    def failed():
+        return [x for x in PackageConfig.packages.values() if not x.built]

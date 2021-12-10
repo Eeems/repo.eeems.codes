@@ -59,6 +59,8 @@ def main(argv):
     else:
         PackageConfig.build()
         PackageConfig.publish()
+        if PackageConfig.failed():
+            raise Exception("One or more build failed")
 
 
 if __name__ == "__main__":
