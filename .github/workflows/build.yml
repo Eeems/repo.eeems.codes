@@ -26,6 +26,7 @@ jobs:
               uses: actions/cache@v2
               with:
                 path: cache
+                key: ${{ runner.os }}
             - name: Build repos
               run: python ./scripts/build.py repos
               env:
