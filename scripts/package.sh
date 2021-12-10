@@ -1,6 +1,11 @@
 #!/bin/bash
-set -e
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
+function cleanup(){
+  log "Cleaning up..."
+  rm -rf pkg/*
+}
+trap cleanup EXIT
+set -e
 shopt -s dotglob nullglob
 log "Importing keyring..."
 echo "$GPG_PRIVKEY" | gpg --import
@@ -64,5 +69,3 @@ log "Checking packages..."
 ls pkg/*.pkg.tar.* | while read pkgfile;do namcap -i "$pkgfile" || true;done
 log "Exporting packages..."
 chronic rsync -Pcuav pkg/*.pkg.tar.* packages
-log "Cleaning up..."
-rm -rf pkg/*
