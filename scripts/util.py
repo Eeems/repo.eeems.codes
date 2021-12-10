@@ -46,3 +46,8 @@ def run(args, env=None, stdin=None, chronic=False):
     except Exception:
         print(f"  {format_exc(0).strip()}")
         return False
+
+
+def sudo_rm(path):
+    if not run(["sudo", "-n", "rm", "-rf", path], chronic=True):
+        raise Exception(f"Failed to remove {path}")
