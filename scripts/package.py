@@ -102,6 +102,8 @@ class Package(BaseConfig):
 
         return self._cache["full_depends"]
 
+    __pulled_images = []
+
     def build(self):
         print(f"=> Building {self.name}")
         tmpdirname = os.environ.get("WORKDIR")
@@ -118,6 +120,11 @@ class Package(BaseConfig):
         ):
             print("  Failed to checkout repo")
             return
+
+        if self.image not in Package.__pulled_images:
+            Package.__pulled_images.append(self.image)
+            if not util.run(["docker", "pull", self.image], chronic=True):
+                return
 
         args = [
             "docker",
