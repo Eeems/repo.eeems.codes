@@ -34,6 +34,7 @@ jobs:
               continue-on-error: true
             - name: Build repos
               run: |
+                sudo rm -rf workdir
                 mkdir workdir
                 python ./scripts/build.py repos
               env:
