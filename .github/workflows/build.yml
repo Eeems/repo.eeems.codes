@@ -41,6 +41,7 @@ jobs:
                   GPGKEY: ${{ secrets.GPGKEY }}
                   GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
                   WORKDIR: workdir
+                  DOCKER_PRUNE: 1
             - uses: actions/upload-artifact@v2
               with:
                 name: packages

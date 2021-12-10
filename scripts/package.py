@@ -148,6 +148,8 @@ class Package(BaseConfig):
             ],
             env,
         )
+        if os.environ.get("DOCKER_PRUNE", False):
+            util.run(["docker", "system", "prune", "--force"], chronic=True)
 
 
 class Repo(object):
