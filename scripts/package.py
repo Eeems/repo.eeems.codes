@@ -104,7 +104,9 @@ class Package(BaseConfig):
 
     def build(self):
         print(f"=> Building {self.name}")
-        with tempfile.TemporaryDirectory() as tmpdirname:
+        with tempfile.TemporaryDirectory(
+            dir=os.environ.get("WORKDIR", None)
+        ) as tmpdirname:
             env = os.environ.copy()
             env[
                 "GIT_SSH_COMMAND"

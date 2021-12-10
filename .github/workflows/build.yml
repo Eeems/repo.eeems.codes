@@ -31,10 +31,13 @@ jobs:
                 path: cache
                 key: ${{ runner.os }}
             - name: Build repos
-              run: python ./scripts/build.py repos
+              run: |
+                mkdir workdir
+                python ./scripts/build.py repos
               env:
                   GPGKEY: ${{ secrets.GPGKEY }}
                   GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
+                  WORKDIR: workdir
             - uses: actions/upload-artifact@v2
               with:
                 name: packages
