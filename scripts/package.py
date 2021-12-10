@@ -1,8 +1,8 @@
 import yaml
 import os
 import io
-import tempfile
 import util
+import shutil
 
 
 class ConfigException(Exception):
@@ -104,48 +104,48 @@ class Package(BaseConfig):
 
     def build(self):
         print(f"=> Building {self.name}")
-        with tempfile.TemporaryDirectory(
-            dir=os.environ.get("WORKDIR", None)
-        ) as tmpdirname:
-            env = os.environ.copy()
-            env[
-                "GIT_SSH_COMMAND"
-            ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-            if not util.run(
-                ["git", "clone", "--depth=1", self.git, os.path.join(tmpdirname)], env
-            ):
-                print("  Failed to checkout repo")
-                return
+        tmpdirname = os.environ.get("WORKDIR")
+        if os.path.exists(tmpdirname):
+            shutil.rmtree(tmpdirname)
+            os.mkdir(tmpdirname)
 
-            args = [
-                "docker",
-                "run",
-                f"--volume={os.path.realpath('.')}:/pkg/ci:ro",
-                f"--volume={os.path.realpath(tmpdirname)}:/pkg/pkg:rw",
-                f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
-                f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
-                "-e",
-                "GPG_PRIVKEY",
-                "-e",
-                "GPGKEY",
-            ]
-            if self.script is not None:
-                args + ["-e", "SETUP_SCRIPT"]
-                env["SETUP_SCRIPT"] = self.script
+        env = os.environ.copy()
+        env[
+            "GIT_SSH_COMMAND"
+        ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+        if not util.run(["git", "clone", "--depth=1", self.git, tmpdirname], env):
+            print("  Failed to checkout repo")
+            return
 
-            if self.cleanup is not None:
-                args + ["-e", "CLEANUP_SCRIPT"]
-                env["CLEANUP_SCRIPT"] = self.cleanup
+        args = [
+            "docker",
+            "run",
+            f"--volume={os.path.realpath('.')}:/pkg/ci:ro",
+            f"--volume={os.path.realpath(tmpdirname)}:/pkg/pkg:rw",
+            f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
+            f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
+            "-e",
+            "GPG_PRIVKEY",
+            "-e",
+            "GPGKEY",
+        ]
+        if self.script is not None:
+            args + ["-e", "SETUP_SCRIPT"]
+            env["SETUP_SCRIPT"] = self.script
 
-            self.built = util.run(
-                args
-                + [
-                    self.image,
-                    "bash",
-                    "ci/scripts/package.sh",
-                ],
-                env,
-            )
+        if self.cleanup is not None:
+            args + ["-e", "CLEANUP_SCRIPT"]
+            env["CLEANUP_SCRIPT"] = self.cleanup
+
+        self.built = util.run(
+            args
+            + [
+                self.image,
+                "bash",
+                "ci/scripts/package.sh",
+            ],
+            env,
+        )
 
 
 class Repo(object):

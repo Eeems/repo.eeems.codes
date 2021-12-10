@@ -3,6 +3,7 @@ import sys
 import argparse
 import util
 import glob
+import tempfile
 
 
 from package import PackageConfig
@@ -29,6 +30,12 @@ def main(argv):
 
     if not os.path.exists("packages"):
         os.mkdir("packages")
+
+    if "WORKDIR" not in os.environ:
+        os.environ["WORKDIR"] = os.path.join(tempfile.gettempdir(), "repo.eeems.codes")
+
+    if not os.path.exists(os.environ["WORKDIR"]):
+        os.mkdir(os.environ["WORKDIR"])
 
     main.args = parser.parse_args(argv)
     with util.pushd(main.args.reposdir):
