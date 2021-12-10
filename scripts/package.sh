@@ -2,7 +2,7 @@
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
 function cleanup(){
   log "Cleaning up..."
-  rm -rf pkg/*
+  sudo rm -rf pkg/*
 }
 trap cleanup EXIT
 set -e
