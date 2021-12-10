@@ -3,23 +3,23 @@ trap cleanup EXIT
 set -e
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
 error(){
-  if [[ "$GITHUB_ACTIONS" != "" ]];then
+  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
     echo -e "::error file=scripts/package.sh::$@"
   else
     echo -e "\033[0;31m$@\033[0m";
   fi
 }
 warning(){
-  if [[ "$GITHUB_ACTIONS" != "" ]];then
+  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
     echo -e "::warning file=scripts/package.sh::$@"
   else
     echo -e "\033[1;33m$@\033[0m";
   fi
 }
 debug(){
-  if [[ "$GITHUB_ACTIONS" != "" ]];then
+  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
     echo -e "::debug file=scripts/package.sh::$@"
-  elif [[ "$VERBOSE" != "" ]];then
+  elif [[ "x$VERBOSE" != "x" ]];then
     echo -e "$@";
   fi
 }
@@ -40,15 +40,18 @@ if ! command chronic &> /dev/null;then
     rm -r cache/chronic
   else
     function chronic(){
-      return "$@"
+      "$@"
+      return $!
     }
   fi
 fi
 function _chronic(){
   if [[ "$VERBOSE" != "" ]];then
-    return "$@"
+    "$@"
+    $!
   fi
-  return chronic "$@"
+  chronic "$@"
+  return $!
 }
 shopt -s dotglob nullglob
 log "Importing keyring..."
@@ -81,7 +84,7 @@ checkdepends=()
 validpgpkeys=()
 source pkg/PKGBUILD
 deps=( "${depends[@]}" "${makedepends[@]}" "${checkdepends[@]}" )
-pacman --deptest "${deps[@]}" | xargs -r _chronic yay -S --cachedir ./cache  --noconfirm
+deps="${deps[@]}" _chronic bash -c 'pacman --deptest "$deps" | xargs -r yay -S --cachedir ./cache  --noconfirm'
 arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
@@ -96,7 +99,8 @@ if [ $arraylength != 0 ];then
 fi
 log "Checking PKGBUILD..."
 if ! namcap -i pkg/PKGBUILD;then
-  error "PKGBUILD contents:\n$(cat pkg/PKGBUILD)"
+  error "PKGBUILD invalid"
+  debug "$(cat pkg/PKGBUILD)"
 fi
 log "Building package..."
 pushd pkg > /dev/null
