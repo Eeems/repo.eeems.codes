@@ -63,3 +63,5 @@ log "Checking packages..."
 ls pkg/*.pkg.tar.* | while read pkgfile;do namcap -i "$pkgfile" || true;done
 log "Exporting packages..."
 rsync -Pcuav pkg/*.pkg.tar.* packages
+log "Cleaning up..."
+rm -rf pkg/*
