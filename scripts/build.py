@@ -39,6 +39,7 @@ def main(argv):
         os.mkdir(os.environ["WORKDIR"])
 
     main.args = parser.parse_args(argv)
+    t = util.term()
     with util.pushd(main.args.reposdir):
         for repo in glob.iglob("*/"):
             for packagePath in glob.iglob(f"{repo}/*.yml"):
@@ -46,7 +47,9 @@ def main(argv):
                     PackageConfig(os.path.dirname(repo), packagePath)
 
                 except Exception:
-                    print(f"Failed handling {packagePath}: {format_exc(0).strip()}")
+                    print(
+                        t.red(f"Failed handling {packagePath}: {format_exc(0).strip()}")
+                    )
 
     PackageConfig.validate()
     if main.args.stats:
@@ -81,5 +84,5 @@ if __name__ == "__main__":
         main(sys.argv[1:])
 
     except Exception:
-        print("Error encountered:\n" + format_exc().strip())
+        print(util.term().red("Error encountered:\n" + format_exc().strip()))
         sys.exit(1)

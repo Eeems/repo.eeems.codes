@@ -2,6 +2,7 @@ import contextlib
 import os
 import sys
 import subprocess
+import platform
 
 from traceback import format_exc
 
@@ -51,3 +52,15 @@ def run(args, env=None, stdin=None, chronic=False):
 def sudo_rm(path):
     if not run(["sudo", "-n", "rm", "-rf", path], chronic=True):
         raise Exception(f"Failed to remove {path}")
+
+
+def term():
+    if not hasattr(term, "_handle"):
+        if sys.platform != "cygwin" and platform.system() == "Windows":
+            from intercessions import Terminal
+        else:
+            from blessings import Terminal
+
+        term._handle = Terminal()
+
+    return term._handle

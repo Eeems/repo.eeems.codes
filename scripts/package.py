@@ -105,7 +105,8 @@ class Package(BaseConfig):
     __pulled_images = []
 
     def build(self):
-        print(f"=> Building {self.name}")
+        t = util.term()
+        print(t.green(f"=> Building {self.name}"))
         tmpdirname = os.environ.get("WORKDIR")
         if os.path.exists(tmpdirname):
             shutil.rmtree(tmpdirname, onerror=lambda f, p, e: util.sudo_rm(p))
@@ -118,12 +119,13 @@ class Package(BaseConfig):
         if not util.run(
             ["git", "clone", "--depth=1", self.git, tmpdirname], env, chronic=True
         ):
-            print("  Failed to checkout repo")
+            print(t.red("  Failed to checkout repo"))
             return
 
         if self.image not in Package.__pulled_images:
             Package.__pulled_images.append(self.image)
             if not util.run(["docker", "pull", self.image], chronic=True):
+                print(t.red("  Failed to pull image"))
                 return
 
         args = [
@@ -137,6 +139,8 @@ class Package(BaseConfig):
             "GPG_PRIVKEY",
             "-e",
             "GPGKEY",
+            "-e",
+            "GITHUB_ACTIONS",
         ]
         if self.script is not None:
             args + ["-e", "SETUP_SCRIPT"]
@@ -155,8 +159,11 @@ class Package(BaseConfig):
             ],
             env,
         )
-        if os.environ.get("DOCKER_PRUNE", False):
-            util.run(["docker", "system", "prune", "--force"], chronic=True)
+        if not os.environ.get("DOCKER_PRUNE", False):
+            return
+
+        if not util.run(["docker", "system", "prune", "--force"], chronic=True):
+            print(t.red("  Failed prune"))
 
 
 class Repo(object):
@@ -179,7 +186,7 @@ class Repo(object):
         ]
 
     def publish(self):
-        print(f"=> Publishing {self.name}")
+        print(util.term().green(f"=> Publishing {self.name}"))
 
 
 class PackageConfig(BaseConfig):
@@ -225,12 +232,22 @@ class PackageConfig(BaseConfig):
     @staticmethod
     def build():
         for package in PackageConfig.sorted_packages():
+            if "GITHUB_ACTIONS" in os.environ:
+                print(f"::group::{package.name}")
+
             package.build()
+            if "GITHUB_ACTIONS" in os.environ:
+                print("::endgroup::")
 
     @staticmethod
     def publish():
         for repo in PackageConfig.repos.values():
+            if "GITHUB_ACTIONS" in os.environ:
+                print(f"::group::{repo.name}")
+
             repo.publish()
+            if "GITHUB_ACTIONS" in os.environ:
+                print("::endgroup::")
 
     @staticmethod
     def failed():

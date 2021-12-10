@@ -2,6 +2,13 @@
 trap cleanup EXIT
 set -e
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
+error(){
+  if [[ "$GITHUB_ACTIONS" != "" ]];then
+    echo -e "::error file=scripts/package.sh::$@"
+  else
+    echo -e "\033[0;31m$@\033[0m";
+  fi
+}
 function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
@@ -26,7 +33,7 @@ fi
 shopt -s dotglob nullglob
 log "Importing keyring..."
 if [[ "$GPG_PRIVKEY" == "" ]];then
-  echo "GPG key missing from env"
+  error "GPG key missing from env"
   exit 1
 fi
 chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
@@ -69,8 +76,7 @@ if [ $arraylength != 0 ];then
 fi
 log "Checking PKGBUILD..."
 if ! namcap -i pkg/PKGBUILD;then
-  log "PKGBUILD contents:"
-  echo pkg/PKGBUILD
+  error "PKGBUILD contents:\n$(cat pkg/PKGBUILD)"
 fi
 log "Building package..."
 pushd pkg > /dev/null
