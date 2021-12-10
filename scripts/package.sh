@@ -1,32 +1,39 @@
 #!/bin/bash
+trap cleanup EXIT
+set -e
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
 function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
 }
-if ! command chronic &> /dev/null;then
-  function chronic() {
-    tmp=$(mktemp) || return
-    "$@"  > "$tmp" 2>&1
-    ret=$?
-    [ "$ret" -eq 0 ] || cat "$tmp"
-    rm -f "$tmp"
-    return "$ret"
-  }
-fi
-trap cleanup EXIT
-set -e
-shopt -s dotglob nullglob
-log "Importing keyring..."
-echo "$GPG_PRIVKEY" | chronic gpg --import
-log "Updating..."
-chronic yay -Sy --cachedir ./cache --noconfirm || true
-command -v rsync &> /dev/null || yay -S --noconfirm rsync
 sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
+if ! command chronic &> /dev/null;then
+  log "Installing chronic"
+  if compgen -G "cache/chronic-*.pkg.tar.*" > /dev/null;then
+    ls cache/chronic-*.pkg.tar.* | while read package;do
+      yay -U --cachedir ./cache --builddir ./cache --noconfirm $package
+    done
+  elif ! yay -Sy --cachedir ./cache --builddir ./cache --noconfirm chronic;then
+    cp cache/chronic/chronic-*.pkg.tar.* cache/
+    function chronic(){
+      return "$@"
+    }
+  fi
+fi
+shopt -s dotglob nullglob
+log "Importing keyring..."
+if [[ "$GPG_PRIVKEY" == "" ]];then
+  echo "GPG key missing from env"
+  exit 1
+fi
+chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
+log "Updating..."
+chronic yay -Sy --cachedir ./cache --builddir ./cache  --noconfirm || true
+command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache --builddir ./cache rsync
 if compgen -G "packages-*/*.pkg.tar.*" > /dev/null;then
   log "Installing defined dependencies..."
-  chronic yay -U --cachedir ./cache --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
+  chronic yay -U --cachedir ./cache --builddir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
 fi
 if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo mkdir tmp
@@ -45,7 +52,7 @@ checkdepends=()
 validpgpkeys=()
 source pkg/PKGBUILD
 deps=( "${depends[@]}" "${makedepends[@]}" "${checkdepends[@]}" )
-chronic pacman --deptest "${deps[@]}" | xargs -r yay -S --cachedir ./cache --noconfirm
+chronic pacman --deptest "${deps[@]}" | xargs -r yay -S --cachedir ./cache --builddir ./cache  --noconfirm
 arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
@@ -78,3 +85,4 @@ log "Checking packages..."
 ls pkg/*.pkg.tar.* | while read pkgfile;do namcap -i "$pkgfile" || true;done
 log "Exporting packages..."
 chronic rsync -Pcuav pkg/*.pkg.tar.* packages
+log "Done with package"
