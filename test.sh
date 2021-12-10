@@ -8,7 +8,7 @@ if ! [ -f .secrets ];then
   exit 1
 fi
 if ! [ -f .keyring/pubring.kbx ];then
-  mkdir .keyring
+  mkdir -p .keyring
   gpg --verbose --batch --gen-key <<EOF
     %echo Generating a basic OpenPGP key
     Key-Type: RSA
@@ -23,7 +23,6 @@ if ! [ -f .keyring/pubring.kbx ];then
     %no-protection
     %pubring .keyring/pubring.kbx
     %secring .keyring.trustdb.gpg
-    # Do a commit here, so that we can later print "done" :-)
     %commit
     %echo done
 EOF
