@@ -40,13 +40,13 @@ jobs:
               continue-on-error: true
             - name: Build repos
               run: |
-                sudo rm -rf workdir
-                mkdir workdir
+                sudo rm -rf /temp/workdir
+                mkdir /temp/workdir
                 python ./scripts/build.py repos ${{ github.events.inputs.package }}
               env:
                   GPGKEY: ${{ secrets.GPGKEY }}
                   GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
-                  WORKDIR: ${{ env.TMPDIR }}/workdir
+                  WORKDIR: /temp/workdir
                   DOCKER_PRUNE: 1
                   GITHUB_ACTIONS: 1
             - uses: actions/upload-artifact@v2

@@ -101,13 +101,13 @@ if [ $arraylength != 0 ];then
       gpg --keyserver keys.openpgp.org --recv-key "${validpgpkeys[$i]}" }
   done
 fi
+pushd pkg > /dev/null
 log "Checking PKGBUILD..."
-if ! namcap -i pkg/PKGBUILD;then
+if ! namcap -i PKGBUILD;then
   error "PKGBUILD invalid"
-  debug "$(cat pkg/PKGBUILD)"
+  debug "$(cat PKGBUILD)"
 fi
 log "Building package..."
-pushd pkg > /dev/null
 _chronic makepkg -f --noconfirm --sign
 if [[ "x$CLEANUP_SCRIPT" != "x" ]];then
   log "Running cleanup script..."
