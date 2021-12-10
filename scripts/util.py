@@ -17,14 +17,29 @@ def pushd(newDir):
         os.chdir(previousDir)
 
 
-def run(args, env=None, stdin=None):
+def run(args, env=None, stdin=None, chronic=False):
     try:
-        subprocess.check_call(
-            args, stdout=sys.stdout, stderr=subprocess.STDOUT, env=env, stdin=stdin
-        )
+        if chronic:
+            subprocess.check_output(
+                args,
+                stderr=subprocess.STDOUT,
+                env=env,
+                stdin=stdin,
+            )
+        else:
+            subprocess.check_call(
+                args,
+                stdout=sys.stdout,
+                stderr=subprocess.STDOUT,
+                env=env,
+                stdin=stdin,
+            )
         return True
 
     except subprocess.CalledProcessError as ex:
+        if chronic:
+            print(ex.output.decode())
+
         print(f"  Process exited with code {ex.returncode}")
         return False
 

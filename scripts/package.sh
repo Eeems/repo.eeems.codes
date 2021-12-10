@@ -4,14 +4,23 @@ function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
 }
+if ! command chronic &> /dev/null;then
+  function chronic() {
+    tmp=$(mktemp) || return
+    "$@"  > "$tmp" 2>&1
+    ret=$?
+    [ "$ret" -eq 0 ] || cat "$tmp"
+    rm -f "$tmp"
+    return "$ret"
+  }
+fi
 trap cleanup EXIT
 set -e
 shopt -s dotglob nullglob
 log "Importing keyring..."
-echo "$GPG_PRIVKEY" | gpg --import
+echo "$GPG_PRIVKEY" | chronic gpg --import
 log "Updating..."
 chronic yay -Sy --cachedir ./cache --noconfirm || true
-chronic yay -S --cachedir ./cache --noconfirm chronic
 command -v rsync &> /dev/null || yay -S --noconfirm rsync
 sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
@@ -41,12 +50,12 @@ arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
   for (( i=0; i<${arraylength}; i++ ));do
-    gpg --recv-key "${validpgpkeys[$i]}" ||
+    chronic { gpg --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver pool.sks-keyservers.net --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver keyserver.ubuntu.com --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver pgp.mit.edu --recv-key "${validpgpkeys[$i]}" ||
       gpg --keyserver keyserver.pgp.com --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver keys.openpgp.org --recv-key "${validpgpkeys[$i]}"
+      gpg --keyserver keys.openpgp.org --recv-key "${validpgpkeys[$i]}" }
   done
 fi
 log "Checking PKGBUILD..."

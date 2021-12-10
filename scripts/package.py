@@ -113,7 +113,9 @@ class Package(BaseConfig):
         env[
             "GIT_SSH_COMMAND"
         ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-        if not util.run(["git", "clone", "--depth=1", self.git, tmpdirname], env):
+        if not util.run(
+            ["git", "clone", "--depth=1", self.git, tmpdirname], env, chronic=True
+        ):
             print("  Failed to checkout repo")
             return
 
