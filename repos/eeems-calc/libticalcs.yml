@@ -1,0 +1,9 @@
+- name: libticonv
+- name: libtifiles
+  depends:
+    - libticonv
+- name: libticables
+- name: libticalcs
+  depends:
+    - libticables
+    - libtifiles

@@ -3,8 +3,7 @@ set -e
 log(){ echo -e "\033[0;31m==> $@\033[0m"; }
 shopt -s dotglob nullglob
 log "Importing keyring..."
-sudo chown -R notroot:notroot keyring
-ls keyring/*.key | while read file;do gpg --import "$file";done
+echo "$GPG_PRIVKEY" | gpg --import
 log "Updating..."
 yay -Sy --cachedir ./cache --noconfirm || true
 command -v rsync &> /dev/null || yay -S --noconfirm rsync

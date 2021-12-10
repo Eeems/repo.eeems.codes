@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 import util
@@ -17,21 +18,40 @@ parser.add_argument(
     "Each directory will contain yml files of package descriptions",
     default=None,
 )
+parser.add_argument(
+    "--stats", action="store_true", help="Show information about the repos"
+)
 
 
 def main(argv):
+    if not os.path.exists("cache"):
+        os.mkdir("cache")
+
+    if not os.path.exists("packages"):
+        os.mkdir("packages")
+
     main.args = parser.parse_args(argv)
     with util.pushd(main.args.reposdir):
-        for repoPath in glob.iglob("*/"):
-            for packagePath in glob.iglob(f"{repoPath}/*.yml"):
+        for repo in glob.iglob("*/"):
+            for packagePath in glob.iglob(f"{repo}/*.yml"):
                 try:
-                    PackageConfig(packagePath)
+                    PackageConfig(os.path.dirname(repo), packagePath)
 
                 except Exception:
                     print(f"Failed handling {packagePath}: {format_exc(0).strip()}")
 
-    print(f"Packages: {PackageConfig.packages}")
     PackageConfig.validate()
+    if main.args.stats:
+        print(f"Repositories: {len(PackageConfig.repos)}")
+        print("Packages")
+        for repo in PackageConfig.repos.values():
+            print(f"  {repo.name}: {len(repo.packages)}")
+
+        print(f"  Total: {len(PackageConfig.packages)}")
+
+    else:
+        PackageConfig.build()
+        PackageConfig.publish()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,4 @@
+git: https://github.com/EmixamPP/linux-enable-ir-emitter.git
+image: registry.eeems.codes/archlinux:wayland
+script: |
+  mv pkg/AUR/git/* pkg

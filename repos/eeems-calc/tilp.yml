@@ -1,0 +1,8 @@
+- name: tilp
+  depends:
+    - libticalcs
+    - gfm
+- name: gfm
+  depends:
+    - libticalcs
+    - libglade

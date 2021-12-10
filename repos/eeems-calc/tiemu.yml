@@ -1,0 +1,4 @@
+depends:
+  - libticalcs
+script: |
+  sudo sed -i 's|-Werror=format-security||g' /etc/makepkg.conf

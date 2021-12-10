@@ -1,0 +1,4 @@
+- name: proton-ge-custom-bin
+  depends:
+    - xboxdrv
+- name: xboxdrv

@@ -1,0 +1,4 @@
+- name: nvidia-340xx-utils
+- name: nvidia-340xx-dkms
+  depends:
+    - nvidia-340xx-utils

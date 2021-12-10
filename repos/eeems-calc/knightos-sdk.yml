@@ -1,0 +1,20 @@
+- name: scas
+- name: genkfs
+#! - name: z80e
+#!   depends:
+#!     - scas
+- name: kpack-git
+- name: knightos-kcc
+  depends:
+    - scas
+- name: kimg
+- name: knightos-sass
+#!- name: knightos-sdk
+#!  depends:
+#!    - genkfs
+#!    - kimg
+#!    - knightos-kcc
+#!    - knightos-sass
+#!    - kpack-git
+#!    - scas
+#!    - z80e

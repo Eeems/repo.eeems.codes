@@ -1,0 +1,3 @@
+git: https://eeems.codes/Eeems/cedev.git
+script: |
+  yay -S --cachedir ./cache --noconfirm unzip

@@ -1,0 +1,5 @@
+- name: bitwarden
+- name: bitwarden-cli
+  depends:
+    - nvm
+- name: nvm

@@ -1,0 +1,15 @@
+- name: pam-python
+  script: |
+    yay -S --cachedir ./cache --noconfirm python2
+- name: python-dlib
+- name: python-face_recognition
+  depends:
+    - python-face_recognition_models
+- name: python-face_recognition_models
+- name: dlib
+- name: howdy
+  depends:
+    - pam-python
+    - python-face_recognition
+    - python-face_recognition_models
+    - python-dlib

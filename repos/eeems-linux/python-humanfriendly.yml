@@ -1,0 +1,4 @@
+- name: python-humanfriendly
+- name: python-coloredlogs
+  depends:
+    - python-humanfriendly
