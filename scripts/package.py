@@ -105,10 +105,6 @@ class Package(BaseConfig):
     def build(self):
         print(f"=> Building {self.name}")
         tmpdirname = os.environ.get("WORKDIR")
-        if os.path.exists(tmpdirname):
-            shutil.rmtree(tmpdirname)
-            os.mkdir(tmpdirname)
-
         env = os.environ.copy()
         env[
             "GIT_SSH_COMMAND"

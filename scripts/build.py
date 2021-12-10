@@ -19,6 +19,7 @@ parser.add_argument(
     "Each directory will contain yml files of package descriptions",
     default=None,
 )
+parser.add_argument("package", help="Build a specific package", nargs="?", default=None)
 parser.add_argument(
     "--stats", action="store_true", help="Show information about the repos"
 )
@@ -55,12 +56,24 @@ def main(argv):
             print(f"  {repo.name}: {len(repo.packages)}")
 
         print(f"  Total: {len(PackageConfig.packages)}")
+        return
 
-    else:
-        PackageConfig.build()
-        PackageConfig.publish()
-        if PackageConfig.failed():
-            raise Exception("One or more build failed")
+    if main.args.package is not None:
+        if main.args.package not in PackageConfig.packages:
+            raise Exception(f"Package {main.args.package} not found")
+
+        package = PackageConfig.packages[main.args.package]
+        package.build()
+        if not package.built:
+            raise Exception("Failed to build")
+
+        package.repo.publish()
+        return
+
+    PackageConfig.build()
+    PackageConfig.publish()
+    if PackageConfig.failed():
+        raise Exception("One or more build failed")
 
 
 if __name__ == "__main__":
