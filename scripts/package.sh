@@ -29,6 +29,10 @@ function cleanup(){
 }
 sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
+if ! [ -f pkg/PKGBUILD ];then
+  error "PKGBUILD missing"
+  exit 1
+fi
 if ! command chronic &> /dev/null;then
   log "Installing chronic"
   if compgen -G "cache/chronic-*.pkg.tar.*" > /dev/null;then
@@ -71,8 +75,8 @@ if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo mkdir tmp
   sudo chown -R notroot:notroot tmp
   pushd tmp > /dev/null
-  sudo ln -s ../pkg pkg
-  sudo ln -s ../cache cache
+  sudo ln -s ../pkg
+  sudo ln -s ../cache
   log "Running setup script..."
   _chronic bash -c "$SETUP_SCRIPT"
   popd > /dev/null

@@ -65,6 +65,9 @@ def main(argv):
         print(f"  Total: {len(PackageConfig.packages)}")
         return
 
+    if main.args.verbose:
+        print(f"Working Directory: {os.environ['WORKDIR']}")
+
     if main.args.package is not None:
         if main.args.package not in PackageConfig.packages:
             raise Exception(f"Package {main.args.package} not found")

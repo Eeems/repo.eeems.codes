@@ -5,6 +5,11 @@ on:
             - main
     schedule:
         - cron: '0 0 * * *'
+    workflow_dispatch:
+      inputs:
+        package:
+          description: 'Package to build'
+          required: false
 jobs:
     build:
         name: Build latest
@@ -22,6 +27,7 @@ jobs:
               with:
                 ssh-private-key: ${{ secrets.SSH_KEY }}
             - uses: actions/setup-python@v2
+              continue-on-error: true
               with:
                 cache: 'pip'
             - run: pip install -r requirements.txt
@@ -36,11 +42,11 @@ jobs:
               run: |
                 sudo rm -rf workdir
                 mkdir workdir
-                python ./scripts/build.py repos
+                python ./scripts/build.py repos ${{ github.events.inputs.package }}
               env:
                   GPGKEY: ${{ secrets.GPGKEY }}
                   GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
-                  WORKDIR: workdir
+                  WORKDIR: ${{ env.TMPDIR }}/workdir
                   DOCKER_PRUNE: 1
                   GITHUB_ACTIONS: 1
             - uses: actions/upload-artifact@v2

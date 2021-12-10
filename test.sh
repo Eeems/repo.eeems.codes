@@ -1,0 +1,63 @@
+#!/bin/bash
+if ! command -v act &> /dev/null;then
+  echo "Please install act from: https://github.com/nektos/act"
+  exit 1
+fi
+if ! [ -f .secrets ];then
+  echo ".secrets file missing"
+  exit 1
+fi
+if ! [ -f .keyring/pubring.kbx ];then
+  mkdir .keyring
+  gpg --verbose --batch --gen-key <<EOF
+    %echo Generating a basic OpenPGP key
+    Key-Type: RSA
+    Key-Length: 2048
+    Subkey-Type: RSA
+    Subkey-Length: 2048
+    Name-Real: User 1
+    Name-Comment: User 1
+    Name-Email: user@1.com
+    Expire-Date: 0
+    %no-ask-passphrase
+    %no-protection
+    %pubring .keyring/pubring.kbx
+    %secring .keyring.trustdb.gpg
+    # Do a commit here, so that we can later print "done" :-)
+    %commit
+    %echo done
+EOF
+    echo -e "5\ny\n" \
+      |  gpg \
+          --no-default-keyring \
+          --secret-keyring .keyring/trustdb.gpg \
+          --keyring .keyring/pubring.kbx \
+          --command-fd 0 \
+          --expert \
+          --edit-key user@1.com trust
+fi
+GPGKEY="$(gpg \
+    --no-default-keyring \
+    --secret-keyring .keyring/trustdb.gpg \
+    --keyring .keyring/pubring.kbx \
+    --list-secret-keys \
+    --with-colons \
+  2> /dev/null \
+  | grep '^sec:' \
+  | cut \
+    --delimiter ':' \
+    --fields 5)" \
+  SSH_KEY="$(cat ~/.ssh/id_rsa)" \
+  GPG_PRIVKEY="$(gpg \
+    --no-default-keyring \
+    --secret-keyring .keyring/trustdb.gpg \
+    --keyring .keyring/pubring.kbx \
+    --export-secret-key \
+    --armor \
+    $GPGKEY)" \
+  act \
+    -s SSH_KEY \
+    -s GPGKEY \
+    -s GPG_PRIVKEY \
+    --secret-file .secrets \
+    --privileged

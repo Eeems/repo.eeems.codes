@@ -2,3 +2,5 @@
 cache/
 packages/
 workdir/
+.secrets
+.keyring
