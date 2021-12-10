@@ -14,9 +14,10 @@ if ! command chronic &> /dev/null;then
     ls cache/chronic-*.pkg.tar.* | while read package;do
       yay -U --cachedir ./cache --noconfirm $package
     done
-  elif ! yay -Sy --cachedir ./cache --builddir ./cache --noconfirm chronic;then
+  elif yay -Sy --cachedir ./cache --builddir ./cache --noconfirm chronic;then
     cp cache/chronic/chronic-*.pkg.tar.* cache/
     rm -r cache/chronic
+  else
     function chronic(){
       return "$@"
     }
