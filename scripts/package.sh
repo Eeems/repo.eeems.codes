@@ -12,10 +12,11 @@ if ! command chronic &> /dev/null;then
   log "Installing chronic"
   if compgen -G "cache/chronic-*.pkg.tar.*" > /dev/null;then
     ls cache/chronic-*.pkg.tar.* | while read package;do
-      yay -U --cachedir ./cache --builddir ./cache --noconfirm $package
+      yay -U --cachedir ./cache --noconfirm $package
     done
   elif ! yay -Sy --cachedir ./cache --builddir ./cache --noconfirm chronic;then
     cp cache/chronic/chronic-*.pkg.tar.* cache/
+    rm -r cache/chronic
     function chronic(){
       return "$@"
     }
@@ -29,11 +30,11 @@ if [[ "$GPG_PRIVKEY" == "" ]];then
 fi
 chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
 log "Updating..."
-chronic yay -Sy --cachedir ./cache --builddir ./cache  --noconfirm || true
-command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache --builddir ./cache rsync
+chronic yay -Sy --cachedir ./cache  --noconfirm || true
+command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache rsync
 if compgen -G "packages-*/*.pkg.tar.*" > /dev/null;then
   log "Installing defined dependencies..."
-  chronic yay -U --cachedir ./cache --builddir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
+  chronic yay -U --cachedir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
 fi
 if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo mkdir tmp
@@ -52,7 +53,7 @@ checkdepends=()
 validpgpkeys=()
 source pkg/PKGBUILD
 deps=( "${depends[@]}" "${makedepends[@]}" "${checkdepends[@]}" )
-chronic pacman --deptest "${deps[@]}" | xargs -r yay -S --cachedir ./cache --builddir ./cache  --noconfirm
+chronic pacman --deptest "${deps[@]}" | xargs -r yay -S --cachedir ./cache  --noconfirm
 arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
