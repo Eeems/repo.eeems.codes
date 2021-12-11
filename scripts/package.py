@@ -107,7 +107,7 @@ class Package(BaseConfig):
     def build(self):
         t = util.term()
         print(t.green(f"=> Building {self.name}"))
-        tmpdirname = os.environ.get("WORKDIR")
+        tmpdirname = os.path.realpath(os.environ.get("WORKDIR"))
         if os.path.exists(tmpdirname):
             shutil.rmtree(tmpdirname, onerror=lambda f, p, e: util.sudo_rm(p))
             os.mkdir(tmpdirname)
@@ -136,7 +136,7 @@ class Package(BaseConfig):
             "docker",
             "run",
             f"--volume={os.path.realpath('.')}:/pkg/ci:ro",
-            f"--volume={os.path.realpath(tmpdirname)}:/pkg/pkg:rw",
+            f"--volume={tmpdirname}:/pkg/pkg:rw",
             f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
             f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
             "-e",

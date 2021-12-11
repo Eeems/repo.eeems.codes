@@ -45,18 +45,24 @@ GPGKEY="$(gpg \
   | grep '^sec:' \
   | cut \
     --delimiter ':' \
-    --fields 5)" \
-  SSH_KEY="$(cat ~/.ssh/id_rsa)" \
-  GPG_PRIVKEY="$(gpg \
-    --no-default-keyring \
-    --secret-keyring .keyring/trustdb.gpg \
-    --keyring .keyring/pubring.kbx \
-    --export-secret-key \
-    --armor \
-    $GPGKEY)" \
-  act \
+    --fields 5)"
+SSH_KEY="$(cat ~/.ssh/id_rsa)"
+GPG_PRIVKEY="$(gpg \
+  --no-default-keyring \
+  --secret-keyring .keyring/trustdb.gpg \
+  --keyring .keyring/pubring.kbx \
+  --export-secret-key \
+  --armor \
+  $GPGKEY)"
+
+if [[ "$1" == "--direct" ]];then
+  eval < .secrets
+  GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" python3 scripts/build.py repos
+else
+  GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" act \
     -s SSH_KEY \
     -s GPGKEY \
     -s GPG_PRIVKEY \
     --secret-file .secrets \
     --privileged
+fi

@@ -6,10 +6,6 @@ on:
     schedule:
         - cron: '0 0 * * *'
     workflow_dispatch:
-      inputs:
-        package:
-          description: 'Package to build'
-          required: false
 jobs:
     build:
         name: Build latest
@@ -40,13 +36,11 @@ jobs:
               continue-on-error: true
             - name: Build repos
               run: |
-                sudo rm -rf /tmp/workdir
-                mkdir /tmp/workdir
-                python ./scripts/build.py repos ${{ github.events.inputs.package }}
+                python ./scripts/build.py repos
               env:
                   GPGKEY: ${{ secrets.GPGKEY }}
                   GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
-                  WORKDIR: /tmp/workdir
+                  WORKDIR: workdir
                   DOCKER_PRUNE: 1
                   GITHUB_ACTIONS: 1
             - uses: actions/upload-artifact@v2
