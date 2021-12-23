@@ -1,0 +1,13 @@
+- name: perl-smart-comments
+- name: perl-www-aur
+- name: perl-checkupdates-aur
+  depends:
+    - perl-smart-comments
+    - perl-www-aur
+- name: checkupdates-aur
+  depends:
+    - perl-checkupdates-aur
+    - perl-smart-comments
+- name: checkupdates+aur
+  depends:
+    - checkupdates-aur
