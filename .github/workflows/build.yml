@@ -30,6 +30,7 @@ jobs:
     needs: [setup]
     strategy:
       matrix: ${{fromJson(needs.setup.outputs.matrix)}}
+      fail-fast: false
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v2
@@ -54,7 +55,7 @@ jobs:
           key: ${{ runner.os }}
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
-      - name: Build repos
+      - name: Build ${{matrix.package}}
         run: |
           python ./scripts/build.py repos ${{matrix.package}}
         env:

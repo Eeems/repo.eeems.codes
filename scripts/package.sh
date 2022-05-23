@@ -108,7 +108,7 @@ if ! namcap -i PKGBUILD;then
   debug "$(cat PKGBUILD)"
 fi
 log "Building package..."
-_chronic makepkg -f --noconfirm --sign
+_chronic makepkg -f --noconfirm
 if [[ "x$CLEANUP_SCRIPT" != "x" ]];then
   log "Running cleanup script..."
   pushd . > /dev/null
