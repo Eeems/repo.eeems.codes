@@ -1,6 +1,7 @@
 import yaml
 import os
 import io
+import glob
 import util
 import shutil
 
@@ -133,8 +134,17 @@ class Package(BaseConfig):
                 return
 
         for package in self.full_depends:
+            dependsdir = os.path.join(tmpdirname, "depends")
+
             for file in glob.iglob(f"packages/{package.name}-*.pkg.tar.*"):
-                os.link(file, os.path.join("depends", os.path.basename(file)))
+                if not os.path.exists(dependsdir):
+                    os.mkdir(dependsdir)
+
+                destination = os.path.join(dependsdir, os.path.basename(file))
+                try:
+                    os.link(file, destination)
+                except OSError:
+                    shutil.copyfile(file, destination)
 
         args = [
             "docker",
@@ -143,7 +153,6 @@ class Package(BaseConfig):
             f"--volume={tmpdirname}:/pkg/pkg:rw",
             f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
             f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
-            f"--volume={os.path.realpath('depends')}:/pkg/depends:r",
             "-e",
             "GPG_PRIVKEY",
             "-e",
