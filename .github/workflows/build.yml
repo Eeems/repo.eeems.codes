@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "::set-output name=set-matrix::$(python ./scripts/build.py repos --json)"
   build:
-    name: Build latest
+    name: Build package
     runs-on: ubuntu-latest
     needs: [setup]
     strategy:
@@ -56,7 +56,7 @@ jobs:
         continue-on-error: true
       - name: Build repos
         run: |
-          python ./scripts/build.py repos ${{matrix.repo}}
+          python ./scripts/build.py repos ${{matrix.package}}
         env:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
