@@ -3,6 +3,7 @@ import sys
 import argparse
 import util
 import glob
+import json
 import tempfile
 
 
@@ -22,6 +23,11 @@ parser.add_argument(
 parser.add_argument("package", help="Build a specific package", nargs="?", default=None)
 parser.add_argument(
     "--stats", action="store_true", help="Show information about the repos"
+)
+parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Output json information for use in a github action matrix",
 )
 parser.add_argument("--verbose", action="store_true", help="Show verbose logs")
 
@@ -56,6 +62,14 @@ def main(argv):
                     )
 
     PackageConfig.validate()
+    if main.args.json:
+        include = []
+        for repo in PackageConfig.repos.values():
+            for package in repo.packages:
+                include.append({"repo": repo.name, "package": package.name})
+        print(json.dumps({"include": include}))
+        return
+
     if main.args.stats:
         print(f"Repositories: {len(PackageConfig.repos)}")
         print("Packages")
