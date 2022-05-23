@@ -65,9 +65,9 @@ def main(argv):
     if main.args.json:
         if main.args.stats:
             include = []
-            for repo in PackageConfig.repos.values():
-                for package in repo.packages:
-                    include.append({"repo": repo.name, "package": package.name})
+            for package in PackageConfig.sorted_packages():
+                include.append({"repo": package.repo.name, "package": package.name})
+
             print(json.dumps({"include": include}))
             return
 
