@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-python@v2
         continue-on-error: true
         with:
-        cache: 'pip'
+          cache: 'pip'
       - run: pip install -r requirements.txt
       - name: Get repo list
         id: set-matrix
@@ -41,17 +41,17 @@ jobs:
           password: ${{ secrets.CR_PAT }}
       - uses: webfactory/ssh-agent@v0.5.4
         with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
       - uses: actions/setup-python@v2
         continue-on-error: true
         with:
-        cache: 'pip'
+          cache: 'pip'
       - run: pip install -r requirements.txt
       - name: Pacman cache
         uses: actions/cache@v2
         with:
-        path: cache
-        key: ${{ runner.os }}
+          path: cache
+          key: ${{ runner.os }}
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
       - name: Build repos
@@ -65,5 +65,5 @@ jobs:
           GITHUB_ACTIONS: 1
       - uses: actions/upload-artifact@v2
         with:
-        name: packages
-        path: packages
+          name: packages
+          path: packages
