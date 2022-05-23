@@ -132,6 +132,10 @@ class Package(BaseConfig):
                 print(t.red("  Failed to pull image"))
                 return
 
+        for package in self.full_depends:
+            for file in glob.iglob(f"packages/{package.name}-*.pkg.tar.*"):
+                os.link(file, os.path.join("depends", os.path.basename(file)))
+
         args = [
             "docker",
             "run",
@@ -139,6 +143,7 @@ class Package(BaseConfig):
             f"--volume={tmpdirname}:/pkg/pkg:rw",
             f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
             f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
+            f"--volume={os.path.realpath('depends')}:/pkg/depends:r",
             "-e",
             "GPG_PRIVKEY",
             "-e",

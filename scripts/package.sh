@@ -67,9 +67,9 @@ _chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
 log "Updating..."
 _chronic yay -Sy --cachedir ./cache  --noconfirm || true
 command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache rsync
-if compgen -G "packages-*/*.pkg.tar.*" > /dev/null;then
+if compgen -G "depends/*.pkg.tar.*" > /dev/null;then
   log "Installing defined dependencies..."
-  _chronic yay -U --cachedir ./cache  --noconfirm packages-*/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
+  _chronic yay -U --cachedir ./cache  --noconfirm depends/*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}
 fi
 if [[ "x$SETUP_SCRIPT" != "x" ]];then
   sudo mkdir tmp
