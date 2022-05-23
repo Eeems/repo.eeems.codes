@@ -63,11 +63,15 @@ def main(argv):
 
     PackageConfig.validate()
     if main.args.json:
-        include = []
-        for repo in PackageConfig.repos.values():
-            for package in repo.packages:
-                include.append({"repo": repo.name, "package": package.name})
-        print(json.dumps({"include": include}))
+        if main.args.stats:
+            include = []
+            for repo in PackageConfig.repos.values():
+                for package in repo.packages:
+                    include.append({"repo": repo.name, "package": package.name})
+            print(json.dumps({"include": include}))
+            return
+
+        print(json.dumps([x.name for x in PackageConfig.repos.values()]))
         return
 
     if main.args.stats:

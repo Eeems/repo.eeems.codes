@@ -11,7 +11,8 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{steps.set-matrix.outputs.set-matrix}}
+      build-matrix: ${{steps.build-matrix.outputs.build-matrix}}
+      repo-matrix: ${{steps.repo-matrix.outputs.repo-matrix}}
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v2
@@ -20,16 +21,21 @@ jobs:
         with:
           cache: 'pip'
       - run: pip install -r requirements.txt
-      - name: Get repo list
-        id: set-matrix
+      - name: Get package list
+        id: build-matrix
         run: |
-          echo "::set-output name=set-matrix::$(python ./scripts/build.py repos --json)"
+          echo "::set-output name=build-matrix::$(python ./scripts/build.py repos --json --stats)"
+      - name: Get repo list
+        id: repo-matrix
+        run: |
+          echo "::set-output name=repo-matrix::$(python ./scripts/build.py repos --json)"
   build:
     name: Build package
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [setup]
     strategy:
-      matrix: ${{fromJson(needs.setup.outputs.matrix)}}
+      matrix: ${{fromJson(needs.setup.outputs.build-matrix)}}
       fail-fast: false
     steps:
       - name: Checkout the Git repository
@@ -68,3 +74,50 @@ jobs:
         with:
           name: packages
           path: packages
+  repo:
+    name: Build repo
+    runs-on: ubuntu-latest
+    needs: [setup, build]
+    strategy:
+      matrix:
+        repo: ${{fromJson(needs.setup.outputs.repo-matrix)}}}
+      fail-fast: false
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+      - name: Checkout the Git repository
+        uses: actions/checkout@v2
+      - name: Login to Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.eeems.codes
+          username: github
+          password: ${{ secrets.CR_PAT }}
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - uses: actions/setup-python@v2
+        continue-on-error: true
+        with:
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Pacman cache
+        uses: actions/cache@v2
+        with:
+          path: cache
+          key: ${{ runner.os }}
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+      - name: Repo ${{matrix.repo}}
+        run: |
+          ls packages
+        env:
+          GPGKEY: ${{ secrets.GPGKEY }}
+          GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
+          WORKDIR: workdir
+          DOCKER_PRUNE: 1
+          GITHUB_ACTIONS: 1
+      - uses: actions/upload-artifact@v2
+        with:
+          name: repo
+          path: repo
