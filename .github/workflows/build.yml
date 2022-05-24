@@ -11,8 +11,8 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      build-matrix: ${{steps.build-matrix.outputs.build-matrix}}
-      repo-matrix: ${{steps.repo-matrix.outputs.repo-matrix}}
+      build-matrix: ${{ steps.build-matrix.outputs.build-matrix }}
+      repo-matrix: ${{ steps.repo-matrix.outputs.repo-matrix }}
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v2
@@ -31,11 +31,11 @@ jobs:
           echo "::set-output name=repo-matrix::$(python ./scripts/build.py repos --json)"
   build:
     name: Build package
-    runs-on: ${{matrix.runner}}
+    runs-on: ${{ matrix.runner }}
     continue-on-error: true
     needs: [setup]
     strategy:
-      matrix: ${{fromJson(needs.setup.outputs.build-matrix)}}
+      matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
       fail-fast: false
     steps:
       - name: Checkout the Git repository
@@ -60,11 +60,12 @@ jobs:
           path: cache
           key: ${{ runner.os }}
       - uses: satackey/action-docker-layer-caching@v0.0.11
+        if: ${{ matrix.runner != "self-hosted" }}
         continue-on-error: true
-      - name: Build ${{matrix.package}}
+      - name: Build ${{ matrix.repo }}/${{ matrix.package }}
         timeout-minutes: 720
         run: |
-          python -u ./scripts/build.py repos ${{matrix.package}}
+          python -u ./scripts/build.py repos ${{ matrix.package }}
         env:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
@@ -83,7 +84,7 @@ jobs:
     needs: [setup, build]
     strategy:
       matrix:
-        repo: ${{fromJson(needs.setup.outputs.repo-matrix)}}}
+        repo: ${{ fromJson(needs.setup.outputs.repo-matrix) }}
       fail-fast: false
     steps:
       - name: Download artifact
@@ -111,7 +112,7 @@ jobs:
           key: ${{ runner.os }}
       - uses: satackey/action-docker-layer-caching@v0.0.11
         continue-on-error: true
-      - name: Repo ${{matrix.repo}}
+      - name: Repo ${{ matrix.repo }}
         run: |
           ls packages
         env:
