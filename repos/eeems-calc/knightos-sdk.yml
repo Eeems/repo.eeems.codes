@@ -5,6 +5,7 @@
 #!     - scas
 - name: kpack-git
 - name: knightos-kcc
+  runner: self-hosted
   depends:
     - scas
 - name: kimg
