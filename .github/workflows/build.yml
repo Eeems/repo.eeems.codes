@@ -60,7 +60,7 @@ jobs:
           path: cache
           key: ${{ runner.os }}
       - uses: satackey/action-docker-layer-caching@v0.0.11
-        if: ${{ matrix.runner != "self-hosted" }}
+        if: ${{ matrix.runner != 'self-hosted' }}
         continue-on-error: true
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
         timeout-minutes: 720
