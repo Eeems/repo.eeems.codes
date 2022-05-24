@@ -71,6 +71,10 @@ class Package(BaseConfig):
         return self._data.get("image", "registry.eeems.codes/archlinux:latest")
 
     @property
+    def runner(self):
+        return self._data.get("runner", "ubuntu-latest")
+
+    @property
     def depends(self):
         if "depends" not in self._cache:
             self._cache["depends"] = [
