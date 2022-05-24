@@ -155,10 +155,10 @@ class Package(BaseConfig):
             "docker",
             "run",
             "--workdir=/pkg",
-            f"--volume={cidirname}:/pkg/ci:ro",
-            f"--volume={tmpdirname}:/pkg/pkg:rw",
-            f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
-            f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
+            f"--mount=bind,src={cidirname},dst=/pkg/ci,readonly",
+            f"--mount=bind,src={tmpdirname},dst=/pkg/pkg",
+            f"--mount=bind,src={os.path.realpath('cache')},dst=/pkg/cache",
+            f"--mount=bind,src={os.path.realpath('packages')},dst=/pkg/packages",
             "-e",
             "GPG_PRIVKEY",
             "-e",
@@ -175,16 +175,6 @@ class Package(BaseConfig):
         if self.cleanup is not None:
             args + ["-e", "CLEANUP_SCRIPT"]
             env["CLEANUP_SCRIPT"] = self.cleanup
-            
-        util.run(
-            args
-            + [
-                self.image,
-                "bash",
-                "/bin/ls -l",
-            ],
-            env,
-        )
 
         self.built = util.run(
             args
