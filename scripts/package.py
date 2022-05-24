@@ -155,6 +155,7 @@ class Package(BaseConfig):
         args = [
             "docker",
             "run",
+            "--workdir=/pkg",
             f"--volume={cidirname}:/pkg/ci:ro",
             f"--volume={tmpdirname}:/pkg/pkg:rw",
             f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
