@@ -79,6 +79,7 @@ jobs:
   repo:
     name: Build repo
     runs-on: ubuntu-latest
+    if: always()
     needs: [setup, build]
     strategy:
       matrix:
