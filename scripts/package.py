@@ -181,7 +181,7 @@ class Package(BaseConfig):
             + [
                 self.image,
                 "bash",
-                "ls ci && ls ci/scripts",
+                "pwd && ls",
             ],
             env,
         )
