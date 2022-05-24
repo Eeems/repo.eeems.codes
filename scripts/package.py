@@ -150,10 +150,12 @@ class Package(BaseConfig):
                 except OSError:
                     shutil.copyfile(file, destination)
 
+        cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        print(cidirname)
         args = [
             "docker",
             "run",
-            f"--volume={os.path.dirname(os.path.dirname(os.path.realpath(__file__)))}:/pkg/ci:ro",
+            f"--volume={cidirname}:/pkg/ci:ro",
             f"--volume={tmpdirname}:/pkg/pkg:rw",
             f"--volume={os.path.realpath('cache')}:/pkg/cache:rw",
             f"--volume={os.path.realpath('packages')}:/pkg/packages:rw",
