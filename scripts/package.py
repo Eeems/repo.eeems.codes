@@ -151,7 +151,6 @@ class Package(BaseConfig):
                     shutil.copyfile(file, destination)
 
         cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        print(cidirname)
         args = [
             "docker",
             "run",
@@ -176,6 +175,16 @@ class Package(BaseConfig):
         if self.cleanup is not None:
             args + ["-e", "CLEANUP_SCRIPT"]
             env["CLEANUP_SCRIPT"] = self.cleanup
+            
+        util.run(
+            args
+            + [
+                self.image,
+                "bash",
+                "ls ci && ls ci/scripts",
+            ],
+            env,
+        )
 
         self.built = util.run(
             args
