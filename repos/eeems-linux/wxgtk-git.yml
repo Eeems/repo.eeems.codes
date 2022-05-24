@@ -7,7 +7,7 @@
     done
 - name: wxgtk-git
   image: registry.eeems.codes/archlinux:wxgtk
-  timeout: 2h
+  runner: self-hosted
   script: |
     sed -i 's|autogen\.sh|autogen.sh;git submodule update --init 3rdparty/catch|g' pkg/PKGBUILD
   depends:
