@@ -115,7 +115,7 @@ jobs:
         continue-on-error: true
       - name: Repo ${{ matrix.repo }}
         run: |
-          ls packages
+          pwd
         env:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
