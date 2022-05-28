@@ -90,38 +90,10 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
-      - name: Checkout the Git repository
-        uses: actions/checkout@v2
-      - name: Login to Docker Registry
-        uses: docker/login-action@v1
-        with:
-          registry: registry.eeems.codes
-          username: github
-          password: ${{ secrets.CR_PAT }}
-      - uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-      - uses: actions/setup-python@v2
-        continue-on-error: true
-        with:
-          cache: 'pip'
-      - run: pip install -r requirements.txt
-      - name: Pacman cache
-        uses: actions/cache@v2
-        with:
-          path: cache
-          key: ${{ runner.os }}
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        continue-on-error: true
       - name: Repo ${{ matrix.repo }}
         run: |
           pwd
-        env:
-          GPGKEY: ${{ secrets.GPGKEY }}
-          GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
-          WORKDIR: workdir
-          DOCKER_PRUNE: 1
-          GITHUB_ACTIONS: 1
+          ls
       - uses: actions/upload-artifact@v2
         with:
           name: repo
