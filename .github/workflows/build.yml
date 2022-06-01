@@ -1,4 +1,7 @@
 name: build
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
 on:
   push:
     branches:
@@ -10,9 +13,6 @@ jobs:
   setup:
     name: Setup
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.head_ref }}
-      cancel-in-progress: true
     outputs:
       build-matrix: ${{ steps.build-matrix.outputs.build-matrix }}
       repo-matrix: ${{ steps.repo-matrix.outputs.repo-matrix }}
@@ -37,9 +37,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
     needs: [setup]
-    concurrency:
-      group: ${{ github.head_ref }}
-      cancel-in-progress: true
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
       fail-fast: false
@@ -89,9 +86,6 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs: [setup, build]
-    concurrency:
-      group: ${{ github.head_ref }}
-      cancel-in-progress: true
     strategy:
       matrix:
         repo: ${{ fromJson(needs.setup.outputs.repo-matrix) }}
