@@ -3,6 +3,8 @@
 - name: system76-acpi-dkms
 - name: system76-oled
 - name: system76-power
+  script: |
+    sed -i "s|depends=\('dbus' 'systemd' 'system76-dkms'\)|depends=('dbus' 'systemd' 'system76-dkms' 'libusb')|" pkg/PKGBUILD
   depends:
     - system76-acpi-dkms
     - system76-dkms
