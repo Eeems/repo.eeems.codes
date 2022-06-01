@@ -1,7 +1,4 @@
 name: build
-concurrency:
-  group: ${{ github.head_ref }}
-  cancel-in-progress: true
 on:
   push:
     branches:
@@ -16,6 +13,9 @@ jobs:
     outputs:
       build-matrix: ${{ steps.build-matrix.outputs.build-matrix }}
       repo-matrix: ${{ steps.repo-matrix.outputs.repo-matrix }}
+    concurrency:
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v2
@@ -36,6 +36,9 @@ jobs:
     name: Build ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
+    concurrency:
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
     needs: [setup]
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
@@ -85,6 +88,9 @@ jobs:
     name: Build repo
     runs-on: ubuntu-latest
     if: always()
+    concurrency:
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
     needs: [setup, build]
     strategy:
       matrix:
