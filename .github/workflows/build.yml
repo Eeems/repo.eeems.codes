@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "::set-output name=repo-matrix::$(python ./scripts/build.py repos --json)"
   build:
-    name: Build package
+    name: Build ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
     needs: [setup]
