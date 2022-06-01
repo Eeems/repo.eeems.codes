@@ -13,9 +13,6 @@ jobs:
     outputs:
       build-matrix: ${{ steps.build-matrix.outputs.build-matrix }}
       repo-matrix: ${{ steps.repo-matrix.outputs.repo-matrix }}
-    concurrency:
-      group: ${{ github.ref }}-${{ github.head_ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v2
@@ -32,13 +29,13 @@ jobs:
         id: repo-matrix
         run: |
           echo "::set-output name=repo-matrix::$(python ./scripts/build.py repos --json)"
+      - uses: n1hility/cancel-previous-runs@v2
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
   build:
     name: Build ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
-    concurrency:
-      group: ${{ github.ref }}-${{ github.head_ref }}
-      cancel-in-progress: true
     needs: [setup]
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
@@ -88,9 +85,6 @@ jobs:
     name: Build repo
     runs-on: ubuntu-latest
     if: always()
-    concurrency:
-      group: ${{ github.ref }}-${{ github.head_ref }}
-      cancel-in-progress: true
     needs: [setup, build]
     strategy:
       matrix:
