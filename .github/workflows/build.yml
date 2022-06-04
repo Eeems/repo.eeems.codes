@@ -78,10 +78,9 @@ jobs:
           VERBOSE: 1
       - name: Sanitize filename
         run: |
-          shopt -s extglob
           cd packages
           ls | while read file;do
-            mv "$file" "${file/:/_}"
+            [[ "$file" == *:* ]] && mv "$file" "${file/:/_}"
           done
       - uses: actions/upload-artifact@v2
         with:
