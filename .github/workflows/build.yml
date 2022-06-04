@@ -80,7 +80,9 @@ jobs:
         run: |
           cd packages
           ls | while read file;do
-            [[ "$file" == *:* ]] && mv "$file" "${file/:/_}"
+            if [[ "$file" == *:* ]];then
+              mv "$file" "${file/:/_}"
+            fi
           done
       - uses: actions/upload-artifact@v2
         with:
