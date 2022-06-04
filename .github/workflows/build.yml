@@ -81,7 +81,7 @@ jobs:
           shopt -s extglob
           cd packages
           ls | while read file;do
-            mv $file "${file#@(:|_)}"
+            mv "$file" "${file/:/_}"
           done
       - uses: actions/upload-artifact@v2
         with:
