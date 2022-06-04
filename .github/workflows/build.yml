@@ -76,6 +76,13 @@ jobs:
           DOCKER_PRUNE: 1
           GITHUB_ACTIONS: 1
           VERBOSE: 1
+      - name: Sanitize filename
+        run: |
+          shopt -s extglob
+          cd packages
+          ls | while read file;do
+            mv $file "${file#@(:|_)}"
+          done
       - uses: actions/upload-artifact@v2
         with:
           name: packages
