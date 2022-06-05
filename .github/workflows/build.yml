@@ -81,7 +81,7 @@ jobs:
           cd packages
           ls | while read file;do
             if [[ "$file" == *:* ]];then
-              mv "$file" "${file/:/_}"
+              sudo mv "$file" "${file/:/_}"
             fi
           done
       - uses: actions/upload-artifact@v2
