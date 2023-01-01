@@ -77,9 +77,14 @@ class Package(BaseConfig):
     @property
     def depends(self):
         if "depends" not in self._cache:
-            self._cache["depends"] = [
-                PackageConfig.packages[x] for x in self._data.get("depends", [])
-            ]
+            self._cache["depends"] = []
+            for name in self._data.get("depends", []):
+                if name not in PackageConfig.packages:
+                    raise ConfigException(
+                        self.name + " has missing dependency: " + name
+                    )
+
+                self._cache["depends"].append(PackageConfig.packages[name])
 
         return self._cache["depends"]
 

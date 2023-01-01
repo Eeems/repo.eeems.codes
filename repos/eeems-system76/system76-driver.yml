@@ -15,7 +15,6 @@
   depends:
     - system76-firmware-daemon
     - firmware-manager
-    - gnome-control-center-system76
     - system76-acpi-dkms
     - system76-dkms
     - system76-io-dkms
