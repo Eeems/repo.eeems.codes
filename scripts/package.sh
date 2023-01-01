@@ -52,7 +52,7 @@ fi
 function _chronic(){
   if [[ "$VERBOSE" != "" ]];then
     "$@"
-    $!
+    return $!
   fi
   chronic "$@"
   return $!
