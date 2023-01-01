@@ -19,6 +19,7 @@ jobs:
       - uses: actions/setup-python@v4
         continue-on-error: true
         with:
+          python-version: '3.11'
           cache: 'pip'
       - run: pip install -r requirements.txt
       - name: Get package list
@@ -56,6 +57,7 @@ jobs:
       - uses: actions/setup-python@v4
         continue-on-error: true
         with:
+          python-version: '3.11'
           cache: 'pip'
       - run: pip install -r requirements.txt
       - name: Pacman cache
