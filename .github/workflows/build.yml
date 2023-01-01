@@ -87,7 +87,7 @@ jobs:
           done
       - uses: actions/upload-artifact@v3
         with:
-          name: packages
+          name: packages-${{ matrix.repo }}
           path: packages
           if-no-files-found: error
   repo:
@@ -102,12 +102,15 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
+        with:
+          name: packages-${{ matrix.repo }}
+          path: repo
       - name: Repo ${{ matrix.repo }}
         run: |
           pwd
           ls
       - uses: actions/upload-artifact@v3
         with:
-          name: repo
+          name: repo-${{ matrix.repo }}
           path: repo
           if-no-files-found: error
