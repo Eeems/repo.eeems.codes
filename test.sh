@@ -64,5 +64,6 @@ else
     -s GPGKEY \
     -s GPG_PRIVKEY \
     --secret-file .secrets \
-    --privileged
+    --privileged \
+    -P ubuntu-latest=catthehacker/ubuntu:full-latest
 fi
