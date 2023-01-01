@@ -4,10 +4,6 @@
   depends:
     - perl-smart-comments
     - perl-www-aur
-- name: checkupdates-aur
-  depends:
-    - perl-checkupdates-aur
-    - perl-smart-comments
 - name: checkupdates+aur
   depends:
-    - checkupdates-aur
+    - perl-checkupdates-aur
