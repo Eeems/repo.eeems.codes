@@ -33,10 +33,6 @@ jobs:
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           python ./scripts/build.py repos --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      - uses: n1hility/cancel-previous-runs@v2
-        with: 
-          token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: build.yml
   build:
     name: Build ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
