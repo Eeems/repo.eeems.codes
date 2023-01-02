@@ -5,6 +5,7 @@ import subprocess
 import platform
 
 from traceback import format_exc
+from blessed import Terminal
 
 
 @contextlib.contextmanager
@@ -56,11 +57,6 @@ def sudo_rm(path):
 
 def term():
     if not hasattr(term, "_handle"):
-        if sys.platform != "cygwin" and platform.system() == "Windows":
-            from intercessions import Terminal
-        else:
-            from blessings import Terminal
-
         term._handle = Terminal()
 
     return term._handle

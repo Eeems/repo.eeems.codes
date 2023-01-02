@@ -55,6 +55,10 @@ class Package(BaseConfig):
         return self._data.get("git", f"https://aur.archlinux.org/{self.name}.git")
 
     @property
+    def branch(self):
+        return self._data.get("branch", None)
+
+    @property
     def name(self):
         return self._data["name"]
 
@@ -73,6 +77,10 @@ class Package(BaseConfig):
     @property
     def runner(self):
         return self._data.get("runner", "ubuntu-latest")
+
+    @property
+    def makedepends(self):
+        return self._data.get("makedepends", [])
 
     @property
     def depends(self):
@@ -126,8 +134,12 @@ class Package(BaseConfig):
         env[
             "GIT_SSH_COMMAND"
         ] = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+        args = []
+        if self.branch is not None:
+            args = ["-b", self.branch]
+
         if not util.run(
-            ["git", "clone", "--depth=1", self.git, tmpdirname],
+            ["git", "clone", "--depth=1"] + args + [self.git, tmpdirname],
             env,
             chronic="VERBOSE" not in os.environ,
         ):
@@ -174,12 +186,21 @@ class Package(BaseConfig):
             "VERBOSE",
         ]
         if self.script is not None:
-            args + ["-e", "SETUP_SCRIPT"]
+            args += ["-e", "SETUP_SCRIPT"]
             env["SETUP_SCRIPT"] = self.script
 
         if self.cleanup is not None:
-            args + ["-e", "CLEANUP_SCRIPT"]
+            args += ["-e", "CLEANUP_SCRIPT"]
             env["CLEANUP_SCRIPT"] = self.cleanup
+
+        if self.makedepends:
+            args += ["-e", "MAKE_DEPENDS"]
+            env["MAKE_DEPENDS"] = ";\n".join(
+                [
+                    "yay -S --cachedir ./cache  --noconfirm " + x
+                    for x in self.makedepends
+                ]
+            )
 
         self.built = util.run(
             args

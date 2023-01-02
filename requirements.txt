@@ -1,3 +1,2 @@
 pyyaml==6.0
-intercessions==1.1.7
-blessings==1.7
+blessed==1.19.1

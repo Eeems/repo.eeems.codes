@@ -1,69 +1,15 @@
 #!/bin/bash
 trap cleanup EXIT
 set -e
-log(){ echo -e "\033[0;31m==> $@\033[0m"; }
-error(){
-  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
-    echo -e "::error file=scripts/package.sh::$@"
-  else
-    echo -e "\033[0;31m$@\033[0m";
-  fi
-}
-warning(){
-  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
-    echo -e "::warning file=scripts/package.sh::$@"
-  else
-    echo -e "\033[1;33m$@\033[0m";
-  fi
-}
-debug(){
-  if [[ "x$GITHUB_ACTIONS" != "x" ]];then
-    echo -e "::debug file=scripts/package.sh::$@"
-  elif [[ "x$VERBOSE" != "x" ]];then
-    echo -e "$@";
-  fi
-}
+source scripts/lib.sh
 function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
 }
 sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
-if ! [ -f pkg/PKGBUILD ];then
-  error "PKGBUILD missing"
-  exit 1
-fi
-if ! command chronic &> /dev/null;then
-  log "Installing chronic"
-  if compgen -G "cache/chronic-*.pkg.tar.*" > /dev/null;then
-    ls cache/chronic-*.pkg.tar.* | while read package;do
-      yay -U --cachedir ./cache --noconfirm $package
-    done
-  elif yay -Sy --cachedir ./cache --builddir ./cache --noconfirm chronic;then
-    cp cache/chronic/chronic-*.pkg.tar.* cache/
-    rm -r cache/chronic
-  else
-    function chronic(){
-      "$@"
-      return $!
-    }
-  fi
-fi
-function _chronic(){
-  if [[ "$VERBOSE" != "" ]];then
-    "$@"
-    return $!
-  fi
-  chronic "$@"
-  return $!
-}
+setup_chronic_and_keyring
 shopt -s dotglob nullglob
-log "Importing keyring..."
-if [[ "$GPG_PRIVKEY" == "" ]];then
-  error "GPG key missing from env"
-  exit 1
-fi
-_chronic bash -c 'echo "$GPG_PRIVKEY" | gpg --import'
 log "Updating..."
 _chronic yay -Sy --cachedir ./cache  --noconfirm || true
 command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache rsync
@@ -80,6 +26,14 @@ if [[ "x$SETUP_SCRIPT" != "x" ]];then
   log "Running setup script..."
   _chronic bash -c "$SETUP_SCRIPT"
   popd > /dev/null
+fi
+if ! [ -f pkg/PKGBUILD ];then
+  error "PKGBUILD missing"
+  exit 1
+fi
+if [[ "x$MAKE_DEPENDS" != "x" ]];then
+  log "Installing Make Depends..."
+  _chronic bash -c "$MAKE_DEPENDS"
 fi
 log "Installing PKGBUILD dependencies..."
 depends=()
