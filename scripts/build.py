@@ -96,10 +96,10 @@ def main(argv):
     if main.args.verbose:
         print(f"Working Directory: {os.environ['WORKDIR']}")
 
-    if (
-        len([x for x in [main.args.package, main.args.publish, main.args.repo] if x])
-        > 0
-    ):
+    count = len(
+        [x for x in [main.args.package, main.args.publish, main.args.repo] if x]
+    )
+    if count and count > 1:
         if main.args.package is not None:
             raise Exception("You cannot specify a package at the same time as --repo")
 
