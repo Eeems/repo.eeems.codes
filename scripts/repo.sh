@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-source scripts/lib.sh
+source $(dirname "${BASH_SOURCE[0]}")/lib.sh
 setup_chronic_and_keyring
 log "Creating repo..."
 sublog "Removing old files"
