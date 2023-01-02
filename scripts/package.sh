@@ -1,11 +1,11 @@
 #!/bin/bash
-trap cleanup EXIT
 set -e
-source scripts/lib.sh
+source $(dirname "${BASH_SOURCE[0]}")/lib.sh
 function cleanup(){
   log "Cleaning up..."
   sudo rm -rf pkg/*
 }
+trap cleanup EXIT
 sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
 setup_chronic_and_keyring
