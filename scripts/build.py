@@ -20,10 +20,13 @@ parser.add_argument(
     "Each directory will contain yml files of package descriptions",
     default=None,
 )
-parser.add_argument("package", help="Build a specific package", nargs="?", default=None)
+parser.add_argument(
+    "--package", help="Build a specific package", nargs="?", default=None
+)
 parser.add_argument(
     "--stats", action="store_true", help="Show information about the repos"
 )
+parser.add_argument("--repo", help="Build a repo", default=None)
 parser.add_argument("--publish", help="Publish a repo", default=None)
 parser.add_argument(
     "--json",
@@ -93,19 +96,32 @@ def main(argv):
     if main.args.verbose:
         print(f"Working Directory: {os.environ['WORKDIR']}")
 
-    if main.args.publish is not None:
+    if (
+        len([x for x in [main.args.package, main.args.publish, main.args.repo] if x])
+        > 0
+    ):
         if main.args.package is not None:
-            raise Exception(
-                "You cannot specify a package at the same time as --publish"
-            )
+            raise Exception("You cannot specify a package at the same time as --repo")
 
+    if main.args.repo is not None:
+        if main.args.repo not in PackageConfig.repos:
+            raise Exception(f"Repo {main.args.repo} not found")
+
+        repo = PackageConfig.repos[main.args.repo]
+        repo.build()
+        if repo.failed:
+            raise Exception("One or more build failed")
+
+        return
+
+    if main.args.publish is not None:
         if main.args.publish not in PackageConfig.repos:
             raise Exception(f"Repo {main.args.publish} not found")
 
         repo = PackageConfig.repos[main.args.publish]
         repo.publish()
         if not repo.published:
-            raise Exception("One or more publish failed")
+            raise Exception("Publish failed")
 
         return
 

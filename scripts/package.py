@@ -245,6 +245,26 @@ class Repo(object):
             if not x.ignore and x.repo is self
         ]
 
+    @property
+    def sorted_packages(self):
+        packages = []
+        for package in self.packages.values():
+            if package.ignore:
+                continue
+
+            for depend in package.full_depends:
+                if depend not in packages:
+                    packages.append(depend)
+
+            if package not in packages:
+                packages.append(package)
+
+        return packages
+
+    @property
+    def failed(self):
+        return [x for x in self.packages if not x.built]
+
     def publish(self):
         t = util.term()
         print(t.green(f"=> Publishing {self.name}"))
@@ -299,6 +319,15 @@ class Repo(object):
             chronic="VERBOSE" not in os.environ,
         ):
             print(t.red("  Failed prune"))
+
+    def build(self):
+        for package in self.sorted_packages:
+            if "GITHUB_ACTIONS" in os.environ:
+                print(f"::group::{package.name}")
+
+            package.build()
+            if "GITHUB_ACTIONS" in os.environ:
+                print("::endgroup::")
 
 
 class PackageConfig(BaseConfig):
@@ -363,6 +392,4 @@ class PackageConfig(BaseConfig):
 
     @staticmethod
     def failed():
-        return [x for x in PackageConfig.packages.values() if not x.built] + [
-            x for x in PackageConfig.repos.values() if not x.published
-        ]
+        return [x for x in PackageConfig.packages.values() if not x.built]

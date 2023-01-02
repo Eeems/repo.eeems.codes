@@ -71,7 +71,7 @@ jobs:
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
         timeout-minutes: 720
         run: |
-          python -u ./scripts/build.py repos ${{ matrix.package }}
+          python -u ./scripts/build.py repos --package ${{ matrix.package }}
         env:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
