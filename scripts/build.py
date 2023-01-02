@@ -24,6 +24,7 @@ parser.add_argument("package", help="Build a specific package", nargs="?", defau
 parser.add_argument(
     "--stats", action="store_true", help="Show information about the repos"
 )
+parser.add_argument("--publish", help="Publish a repo", default=None)
 parser.add_argument(
     "--json",
     action="store_true",
@@ -92,6 +93,22 @@ def main(argv):
     if main.args.verbose:
         print(f"Working Directory: {os.environ['WORKDIR']}")
 
+    if main.args.publish is not None:
+        if main.args.package is not None:
+            raise Exception(
+                "You cannot specify a package at the same time as --publish"
+            )
+
+        if main.args.publish not in PackageConfig.repos:
+            raise Exception(f"Repo {main.args.publish} not found")
+
+        repo = PackageConfig.repos[main.args.publish]
+        repo.publish()
+        if not repo.published:
+            raise Exception("One or more publish failed")
+
+        return
+
     if main.args.package is not None:
         if main.args.package not in PackageConfig.packages:
             raise Exception(f"Package {main.args.package} not found")
@@ -101,7 +118,6 @@ def main(argv):
         if not package.built:
             raise Exception("Failed to build")
 
-        package.repo.publish()
         return
 
     PackageConfig.build()

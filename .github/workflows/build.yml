@@ -111,7 +111,7 @@ jobs:
           path: repo
       - name: Repo ${{ matrix.repo }}
         run: |
-          bash ./scripts/repo.sh
+          python -u ./scripts/build.py repos --publish ${{ matrix.repo }}
         env:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}

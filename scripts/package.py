@@ -120,7 +120,7 @@ class Package(BaseConfig):
 
         return self._cache["full_depends"]
 
-    __pulled_images = []
+    _pulled_images = []
 
     def build(self):
         t = util.term()
@@ -146,8 +146,11 @@ class Package(BaseConfig):
             print(t.red("  Failed to checkout repo"))
             return
 
-        if self.image not in Package.__pulled_images:
-            Package.__pulled_images.append(self.image)
+        if self.image not in Package._pulled_images:
+            Package._pulled_images.append(self.image)
+            if "VERBOSE" not in os.environ:
+                print(t.green(f"  Pulling {self.image}"))
+
             if not util.run(
                 ["docker", "pull", self.image], chronic="VERBOSE" not in os.environ
             ):
@@ -231,6 +234,8 @@ class Repo(object):
 
         PackageConfig.repos[name] = self
         self.name = name
+        self.image = "registry.eeems.codes/archlinux:latest"
+        self.published = False
 
     @property
     def packages(self):
@@ -241,7 +246,59 @@ class Repo(object):
         ]
 
     def publish(self):
-        print(util.term().green(f"=> Publishing {self.name}"))
+        t = util.term()
+        print(t.green(f"=> Publishing {self.name}"))
+        tmpdirname = os.path.realpath(os.environ.get("WORKDIR"))
+        if os.path.exists(tmpdirname):
+            shutil.rmtree(tmpdirname, onerror=lambda f, p, e: util.sudo_rm(p))
+            os.mkdir(tmpdirname)
+
+        if self.image not in Package._pulled_images:
+            Package._pulled_images.append(self.image)
+            if "VERBOSE" not in os.environ:
+                print(t.green(f"  Pulling {self.image}"))
+
+            if not util.run(
+                ["docker", "pull", self.image], chronic="VERBOSE" not in os.environ
+            ):
+                print(t.red("  Failed to pull image"))
+                return
+
+        cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        env = os.environ.copy()
+        env["REPO_NAME"] = self.name
+
+        self.published = util.run(
+            [
+                "docker",
+                "run",
+                "--workdir=/pkg",
+                f"--mount=type=bind,src={cidirname},dst=/pkg/ci,readonly",
+                f"--mount=type=bind,src={os.path.realpath('repo')},dst=/pkg/repo",
+                "-e",
+                "GPG_PRIVKEY",
+                "-e",
+                "GPGKEY",
+                "-e",
+                "GITHUB_ACTIONS",
+                "-e",
+                "REPO_NAME",
+                "-e",
+                "VERBOSE",
+                self.image,
+                "bash",
+                "ci/scripts/repo.sh",
+            ],
+            env,
+        )
+        if not os.environ.get("DOCKER_PRUNE", False):
+            return
+
+        if not util.run(
+            ["docker", "system", "prune", "--force"],
+            chronic="VERBOSE" not in os.environ,
+        ):
+            print(t.red("  Failed prune"))
 
 
 class PackageConfig(BaseConfig):
@@ -306,4 +363,6 @@ class PackageConfig(BaseConfig):
 
     @staticmethod
     def failed():
-        return [x for x in PackageConfig.packages.values() if not x.built]
+        return [x for x in PackageConfig.packages.values() if not x.built] + [
+            x for x in PackageConfig.repos.values() if not x.published
+        ]
