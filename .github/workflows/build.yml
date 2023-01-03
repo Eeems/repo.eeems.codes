@@ -68,6 +68,12 @@ jobs:
       - uses: jpribyl/action-docker-layer-caching@v0.1.1
         if: ${{ matrix.runner != 'self-hosted' }}
         continue-on-error: true
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: packages-${{ matrix.repo }}
+          path: repo
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
         timeout-minutes: 720
         run: |

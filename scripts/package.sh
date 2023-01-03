@@ -10,6 +10,15 @@ sudo mkdir -p cache
 sudo chown -R notroot:notroot cache pkg
 setup_chronic_and_keyring
 shopt -s dotglob nullglob
+log "Generating local repo..."
+if [ -d /pkg/repo ];then
+  mkdir /repo
+  echo '[local]' | sudo tee -a /etc/pacman.conf
+  echo 'SigLevel = Optional TrustAll' | sudo tee -a /etc/pacman.conf
+  echo 'Server = file:///repo' | sudo tee -a /etc/pacman.conf
+  packages=($(echo ./*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}))
+  repo-add --remove --prevent-downgrade /repo/local.db.tar.gz ${packages[@]}
+fi
 log "Updating..."
 _chronic yay -Sy --cachedir ./cache  --noconfirm || true
 command -v rsync &> /dev/null || yay -S --noconfirm --cachedir ./cache rsync

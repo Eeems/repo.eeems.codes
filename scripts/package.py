@@ -179,6 +179,7 @@ class Package(BaseConfig):
             f"--mount=type=bind,src={tmpdirname},dst=/pkg/pkg",
             f"--mount=type=bind,src={os.path.realpath('cache')},dst=/pkg/cache",
             f"--mount=type=bind,src={os.path.realpath('packages')},dst=/pkg/packages",
+            f"--mount=type=bind,src={os.path.realpath('repo')},dst=/pkg/repo",
             "-e",
             "GPG_PRIVKEY",
             "-e",
