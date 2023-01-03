@@ -95,6 +95,7 @@ jobs:
   repo:
     name: Build repo
     runs-on: ubuntu-latest
+    if: success() || failure()
     needs: [setup, build]
     strategy:
       matrix:
