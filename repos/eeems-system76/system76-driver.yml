@@ -20,3 +20,5 @@
     - system76-io-dkms
     - system76-oled
     - system76-power
+  makedepends:
+    - python-setuptools
