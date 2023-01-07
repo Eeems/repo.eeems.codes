@@ -171,15 +171,14 @@ class Package(BaseConfig):
                     shutil.copyfile(file, destination)
 
         cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        args = [
-            "docker",
-            "run",
-            "--workdir=/pkg",
-            f"--mount=type=bind,src={cidirname},dst=/pkg/ci,readonly",
-            f"--mount=type=bind,src={tmpdirname},dst=/pkg/pkg",
-            f"--mount=type=bind,src={os.path.realpath('cache')},dst=/pkg/cache",
-            f"--mount=type=bind,src={os.path.realpath('packages')},dst=/pkg/packages",
-            f"--mount=type=bind,src={os.path.realpath('repo')},dst=/pkg/repo",
+        args = []
+        with os.scandir("repo") as d:
+            if any(d):
+                args += [
+                    f"--mount=type=bind,src={os.path.realpath('repo')},dst=/pkg/repo"
+                ]
+
+        args += [
             "-e",
             "GPG_PRIVKEY",
             "-e",
@@ -207,7 +206,16 @@ class Package(BaseConfig):
             )
 
         self.built = util.run(
-            args
+            [
+                "docker",
+                "run",
+                "--workdir=/pkg",
+                f"--mount=type=bind,src={cidirname},dst=/pkg/ci,readonly",
+                f"--mount=type=bind,src={tmpdirname},dst=/pkg/pkg",
+                f"--mount=type=bind,src={os.path.realpath('cache')},dst=/pkg/cache",
+                f"--mount=type=bind,src={os.path.realpath('packages')},dst=/pkg/packages",
+            ]
+            + args
             + [
                 self.image,
                 "bash",
