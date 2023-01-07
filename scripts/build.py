@@ -43,6 +43,9 @@ def main(argv):
     if not os.path.exists("packages"):
         os.mkdir("packages")
 
+    if not os.path.exists("repo"):
+        os.mkdir("repo")
+
     if "WORKDIR" not in os.environ:
         os.environ["WORKDIR"] = os.path.join(tempfile.gettempdir(), "repo.eeems.codes")
 

@@ -12,7 +12,7 @@ setup_chronic_and_keyring
 shopt -s dotglob nullglob
 log "Generating local repo..."
 if [ -d /pkg/repo ];then
-  mkdir /repo
+  sudo mkdir /repo
   echo '[local]' | sudo tee -a /etc/pacman.conf
   echo 'SigLevel = Optional TrustAll' | sudo tee -a /etc/pacman.conf
   echo 'Server = file:///repo' | sudo tee -a /etc/pacman.conf

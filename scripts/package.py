@@ -169,9 +169,6 @@ class Package(BaseConfig):
                     os.link(file, destination)
                 except OSError:
                     shutil.copyfile(file, destination)
-                    
-        if not os.path.exists("repo"):
-            os.mkdir('repo')
 
         cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         args = [
