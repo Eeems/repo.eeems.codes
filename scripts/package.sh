@@ -13,6 +13,7 @@ shopt -s dotglob nullglob
 log "Generating local repo..."
 if [ -d /pkg/repo ];then
   sudo mkdir /repo
+  sudo chown -R notroot:notroot /repo
   echo '[local]' | sudo tee -a /etc/pacman.conf
   echo 'SigLevel = Optional TrustAll' | sudo tee -a /etc/pacman.conf
   echo 'Server = file:///repo' | sudo tee -a /etc/pacman.conf
