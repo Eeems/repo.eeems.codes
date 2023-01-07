@@ -68,6 +68,10 @@ jobs:
       - uses: jpribyl/action-docker-layer-caching@v0.1.1
         if: ${{ matrix.runner != 'self-hosted' }}
         continue-on-error: true
+        with:
+          key: ${{ matrix.package }}-{hash}
+          restore-keys: |
+            ${{ matrix.package }}-
       - name: Download artifact
         uses: actions/download-artifact@v3
         continue-on-error: true
@@ -115,6 +119,19 @@ jobs:
         with:
           name: packages-${{ matrix.repo }}
           path: repo
+      - uses: actions/setup-python@v4
+        continue-on-error: true
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+        if: ${{ matrix.runner != 'self-hosted' }}
+        continue-on-error: true
+        with:
+          key: ${{ matrix.repo }}-{hash}
+          restore-keys: |
+            ${{ matrix.repo }}-
       - name: Repo ${{ matrix.repo }}
         run: |
           python -u ./scripts/build.py repos --publish ${{ matrix.repo }}
