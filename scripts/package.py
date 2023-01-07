@@ -282,6 +282,11 @@ class Repo(object):
             shutil.rmtree(tmpdirname, onerror=lambda f, p, e: util.sudo_rm(p))
             os.mkdir(tmpdirname)
 
+        with os.scandir("repo") as d:
+            if not any(d):
+                print(t.red("  There are no packages"))
+                return
+
         if self.image not in Package._pulled_images:
             Package._pulled_images.append(self.image)
             if "VERBOSE" not in os.environ:
