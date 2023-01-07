@@ -14,11 +14,11 @@ log "Generating local repo..."
 if [ -d /pkg/repo ];then
   sudo mkdir /repo
   sudo chown -R notroot:notroot /repo
-  echo '[local]' | sudo tee -a /etc/pacman.conf
+  echo '[localrepo]' | sudo tee -a /etc/pacman.conf
   echo 'SigLevel = Optional TrustAll' | sudo tee -a /etc/pacman.conf
   echo 'Server = file:///repo' | sudo tee -a /etc/pacman.conf
   packages=($(echo ./*.pkg.tar{,.gz,.bz2,.xz,.Z,.zst}))
-  repo-add --remove --prevent-downgrade /repo/local.db.tar.gz ${packages[@]}
+  repo-add --remove --prevent-downgrade /repo/localrepo.db.tar.gz ${packages[@]}
 fi
 log "Updating..."
 _chronic yay -Sy --cachedir ./cache  --noconfirm || true
