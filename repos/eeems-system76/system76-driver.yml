@@ -9,12 +9,8 @@
     - system76-acpi-dkms
     - system76-dkms
     - system76-io-dkms
-- name: system76-firmware-daemon
-- name: firmware-manager
 - name: system76-driver
   depends:
-    - system76-firmware-daemon
-    - firmware-manager
     - system76-acpi-dkms
     - system76-dkms
     - system76-io-dkms
