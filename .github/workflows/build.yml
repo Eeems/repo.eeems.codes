@@ -26,13 +26,13 @@ jobs:
         id: build-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
-          python ./scripts/build.py --repos-dir repos stats --json >> $GITHUB_OUTPUT
+          python ./scripts/build.py --repos-dir repos info --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       - name: Get repo list
         id: repo-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
-          python ./scripts/build.py --repos-dir repos info --json >> $GITHUB_OUTPUT
+          python ./scripts/build.py --repos-dir repos stats --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
   packages:
     name: Package ${{ matrix.repo }}/${{ matrix.package }}
