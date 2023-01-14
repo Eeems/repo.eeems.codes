@@ -57,7 +57,14 @@ GPG_PRIVKEY="$(gpg \
 
 if [[ "$1" == "--direct" ]];then
   eval < .secrets
-  GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" python3 scripts/build.py repos
+  GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" python3 scripts/build.py build all
+elif [[ "$1" == "--repo" ]];then
+  if [[ "x$2" == "x" ]];then
+    echo "You must specify a repo"
+    exit 1
+  fi
+  eval < .secrets
+  GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" python3 scripts/build.py build repo "$2"
 else
   GPG_PRIVKEY="$GPG_PRIVKEY" GPGKEY="$GPGKEY" SSH_KEY="$SSH_KEY" act \
     -s SSH_KEY \
