@@ -102,11 +102,35 @@ def stats(parser):
         return
 
     print(f"Repositories: {len(PackageConfig.repos)}")
-    print("Packages")
+    images = set(
+        [x.image for x in PackageConfig.packages.values()]
+        + [x.image for x in PackageConfig.repos.values()]
+    )
+    print(f"Images: {len(images)}")
+    print(f"Packages: {len(PackageConfig.packages)}")
     for repo in PackageConfig.repos.values():
         print(f"  {repo.name}: {len(repo.packages)}")
 
-    print(f"  Total: {len(PackageConfig.packages)}")
+
+@action
+def images(parser):
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output json information for use in a github action matrix",
+    )
+    yield
+    images = set(
+        [x.image for x in PackageConfig.packages.values()]
+        + [x.image for x in PackageConfig.repos.values()]
+    )
+    if main.args.json:
+        print(json.dumps({"include": [{"image": x} for x in images]}))
+        return
+
+    print(f"Images: {len(images)}")
+    for image in images:
+        print(f"  {image}")
 
 
 def _setup_paths():
@@ -198,6 +222,13 @@ def build(parser):
 
     elif main.args.type == "all":
         _build_all()
+
+
+@action
+def pull(parser):
+    parser.add_argument("image", help="Image to pull from docker")
+    yield
+    PackageConfig.pull(main.args.image)
 
 
 def main(argv):

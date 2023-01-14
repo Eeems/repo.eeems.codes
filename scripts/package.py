@@ -120,8 +120,6 @@ class Package(BaseConfig):
 
         return self._cache["full_depends"]
 
-    _pulled_images = []
-
     def build(self):
         t = util.term()
         print(t.green(f"=> Building {self.name}"))
@@ -146,17 +144,7 @@ class Package(BaseConfig):
             print(t.red("  Failed to checkout repo"))
             return
 
-        if self.image not in Package._pulled_images:
-            Package._pulled_images.append(self.image)
-            if "VERBOSE" not in os.environ:
-                print(t.green(f"  Pulling {self.image}"))
-
-            if not util.run(
-                ["docker", "pull", self.image], chronic="VERBOSE" not in os.environ
-            ):
-                print(t.red("  Failed to pull image"))
-                return
-
+        PackageConfig.pull(self.image)
         for package in self.full_depends:
             dependsdir = os.path.join(tmpdirname, "depends")
 
@@ -287,17 +275,7 @@ class Repo(object):
                 print(t.red("  There are no packages"))
                 return
 
-        if self.image not in Package._pulled_images:
-            Package._pulled_images.append(self.image)
-            if "VERBOSE" not in os.environ:
-                print(t.green(f"  Pulling {self.image}"))
-
-            if not util.run(
-                ["docker", "pull", self.image], chronic="VERBOSE" not in os.environ
-            ):
-                print(t.red("  Failed to pull image"))
-                return
-
+        PackageConfig.pull(self.image)
         cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         env = os.environ.copy()
         env["REPO_NAME"] = self.name
@@ -347,6 +325,7 @@ class Repo(object):
 class PackageConfig(BaseConfig):
     repos = {}
     packages = {}
+    pulled_images = []
 
     def __init__(self, repo, path):
         self.path = os.path.realpath(path)
@@ -407,3 +386,18 @@ class PackageConfig(BaseConfig):
     @staticmethod
     def failed():
         return [x for x in PackageConfig.packages.values() if not x.built]
+
+    @staticmethod
+    def pull(image):
+        if image in PackageConfig.pulled_images:
+            return
+
+        t = util.term()
+        if "VERBOSE" not in os.environ:
+            print(t.green(f"  Pulling {image}"))
+
+        if not util.run(["docker", "pull", image], chronic="VERBOSE" not in os.environ):
+            print(t.red("  Failed to pull image"))
+            return
+
+        PackageConfig.pulled_images.append(image)

@@ -11,8 +11,9 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     outputs:
-      build-matrix: ${{ steps.build-matrix.outputs.JSON_CONTENT }}
-      repo-matrix: ${{ steps.repo-matrix.outputs.JSON_CONTENT }}
+      packages-matrix: ${{ steps.packages-matrix.outputs.JSON_CONTENT }}
+      repos-matrix: ${{ steps.repos-matrix.outputs.JSON_CONTENT }}
+      images-matrix: ${{ steps.images-matrix.outputs.JSON_CONTENT }}
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v3
@@ -22,25 +23,64 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       - run: pip install -r requirements.txt
+      - name: Get image list
+        id: images-matrix
+        run: |
+          echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
+          python ./scripts/build.py --repos-dir repos images --json >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
       - name: Get package list
-        id: build-matrix
+        id: packages-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           python ./scripts/build.py --repos-dir repos info --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       - name: Get repo list
-        id: repo-matrix
+        id: repos-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           python ./scripts/build.py --repos-dir repos stats --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
+  images:
+    name: Image ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [setup]
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.images-matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v3
+      - name: Login to Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.eeems.codes
+          username: github
+          password: ${{ secrets.CR_PAT }}
+      - uses: actions/setup-python@v4
+        continue-on-error: true
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+        if: ${{ matrix.runner != 'self-hosted' }}
+        continue-on-error: true
+        with:
+          key: image-${{ matrix.image }}-{hash}
+          restore-keys: |
+            image-${{ matrix.image }}-
+      - name: Image ${{ matrix.image }}
+        run: |
+          python -u ./scripts/build.py --repos-dir repos pull ${{ matrix.image }}
   packages:
     name: Package ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
-    needs: [setup]
+    needs: [setup, images]
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
+      matrix: ${{ fromJson(needs.setup.outputs.packages-matrix) }}
       fail-fast: false
     steps:
       - name: Checkout the Git repository
@@ -106,9 +146,9 @@ jobs:
     name: Repo ${{ matrix.repo }}
     runs-on: ubuntu-latest
     if: success() || failure()
-    needs: [setup, packages]
+    needs: [setup, images, packages]
     strategy:
-      matrix: ${{ fromJson(needs.setup.outputs.repo-matrix) }}
+      matrix: ${{ fromJson(needs.setup.outputs.repos-matrix) }}
       fail-fast: false
     steps:
       - name: Checkout the Git repository
