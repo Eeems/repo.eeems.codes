@@ -74,6 +74,9 @@ jobs:
       - name: Image ${{ matrix.image }}
         run: |
           python -u ./scripts/build.py --repos-dir repos pull ${{ matrix.image }}
+        env:
+          GITHUB_ACTIONS: 1
+          VERBOSE: 1
   packages:
     name: Package ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}

@@ -136,11 +136,18 @@ class Package(BaseConfig):
         if self.branch is not None:
             args = ["-b", self.branch]
 
-        if not util.run(
+        if "GITHUB_ACTIONS" in os.environ:
+            print(f"::group::git checkout {self.git}")
+
+        success = util.run(
             ["git", "clone", "--depth=1"] + args + [self.git, tmpdirname],
             env,
-            chronic="VERBOSE" not in os.environ,
-        ):
+            chronic="VERBOSE" not in os.environ and "GITHUB_ACTIONS" not in os.environ,
+        )
+        if "GITHUB_ACTIONS" in os.environ:
+            print("::endgroup::")
+
+        if not success:
             print(t.red("  Failed to checkout repo"))
             return
 
@@ -193,6 +200,9 @@ class Package(BaseConfig):
                 ]
             )
 
+        if "GITHUB_ACTIONS" in os.environ:
+            print(f"::group::docker run {self.image}")
+
         self.built = util.run(
             [
                 "docker",
@@ -211,13 +221,23 @@ class Package(BaseConfig):
             ],
             env,
         )
+        if "GITHUB_ACTIONS" in os.environ:
+            print("::endgroup::")
+
         if not os.environ.get("DOCKER_PRUNE", False):
             return
 
-        if not util.run(
+        if "GITHUB_ACTIONS" in os.environ:
+            print("::group::docker system prune --force")
+
+        success = util.run(
             ["docker", "system", "prune", "--force"],
-            chronic="VERBOSE" not in os.environ,
-        ):
+            chronic="VERBOSE" not in os.environ and "GITHUB_ACTIONS" not in os.environ,
+        )
+        if "GITHUB_ACTIONS" in os.environ:
+            print("::endgroup::")
+
+        if not success:
             print(t.red("  Failed prune"))
 
 
@@ -396,7 +416,17 @@ class PackageConfig(BaseConfig):
         if "VERBOSE" not in os.environ:
             print(t.green(f"  Pulling {image}"))
 
-        if not util.run(["docker", "pull", image], chronic="VERBOSE" not in os.environ):
+        if "GITHUB_ACTIONS" in os.environ:
+            print(f"::group::docker pull {image}")
+
+        success = util.run(
+            ["docker", "pull", image],
+            chronic="VERBOSE" not in os.environ and "GITHUB_ACTIONS" not in os.environ,
+        )
+        if "GITHUB_ACTIONS" in os.environ:
+            print("::endgroup::")
+
+        if not success:
             print(t.red("  Failed to pull image"))
             return
 
