@@ -34,8 +34,8 @@ jobs:
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           python ./scripts/build.py --repos-dir repos info --json >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-  build:
-    name: Build ${{ matrix.repo }}/${{ matrix.package }}
+  packages:
+    name: Package ${{ matrix.repo }}/${{ matrix.package }}
     runs-on: ${{ matrix.runner }}
     continue-on-error: true
     needs: [setup]
@@ -102,11 +102,11 @@ jobs:
           name: packages-${{ matrix.repo }}
           path: packages
           if-no-files-found: error
-  repo:
-    name: Build repo
+  repos:
+    name: Repo ${{ matrix.repo }}
     runs-on: ubuntu-latest
     if: success() || failure()
-    needs: [setup, build]
+    needs: [setup, packages]
     strategy:
       matrix: ${{ fromJson(needs.setup.outputs.repo-matrix) }}
       fail-fast: false
