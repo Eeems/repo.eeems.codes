@@ -4,6 +4,7 @@ source $(dirname "${BASH_SOURCE[0]}")/lib.sh
 setup_chronic_and_keyring
 log "Creating repo..."
 sublog "Removing old files"
+sudo chown -R notroot:notroot repo
 cd repo
 rm -f "$REPO_NAME.db.tar.gz" "$REPO_NAME.files.tar.gz" "$REPO_NAME.db.tar.gz.old" "$REPO_NAME.db.tar.gz.sig" "$REPO_NAME.files.tar.gz.sig"
 log "Signing packages..."
