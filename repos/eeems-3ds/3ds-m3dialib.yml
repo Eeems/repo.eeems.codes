@@ -1,6 +1,0 @@
-git: ssh://git@gogs:3022/Eeems/3ds-m3dialib.git
-ignore: true
-image: registry.eeems.codes/archlinux:devkitpro
-script: |
-  export DEVKITPRO=/opt/devkitpro
-  export DEVKITARM=/opt/devkitpro/devkitARM
