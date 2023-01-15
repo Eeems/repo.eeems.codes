@@ -122,7 +122,7 @@
           </li>
         </ul>
         <p>
-          If you encounter any issues, please report them <a href="https://eeems.codes/Eeems/repo.eeems.codes/issues">here</a> or to <a href="mailto://repo@eeems.codes">repo@eeems.codes</a>
+          If you encounter any issues, please report them <a href="https://github.com/Eeems/repo.eeems.codes/issues">here</a> or to <a href="mailto://repo@eeems.codes">repo@eeems.codes</a>
         </p>
       </section>
     </article>
