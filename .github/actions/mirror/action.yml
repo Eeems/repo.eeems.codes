@@ -6,6 +6,8 @@ inputs:
     required: true
   path:
     required: true
+  key:
+    required: true
 runs:
   using: composite
   steps:
@@ -40,4 +42,4 @@ runs:
       env:
         VERBOSE: 1
         GITHUB_ACTIONS: 1
-        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_KEY: ${{ inputs.key }}

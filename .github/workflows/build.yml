@@ -201,6 +201,7 @@ jobs:
           server: ${{ vars.SSH_SERVER }}
           user: ${{ vars.SSH_USER }}
           path: ${{ vars.SSH_PATH }}
+          key: ${{ secrets.SSH_KEY }}
   mirror1:
     name: Mirror1
     runs-on: ubuntu-latest
@@ -213,3 +214,4 @@ jobs:
           server: ${{ vars.SSH_SERVER }}
           user: ${{ vars.SSH_USER }}
           path: ${{ vars.SSH_PATH }}
+          key: ${{ secrets.SSH_KEY }}
