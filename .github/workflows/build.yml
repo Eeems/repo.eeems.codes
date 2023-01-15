@@ -191,7 +191,7 @@ jobs:
           if-no-files-found: error
   mirror0:
     name: Mirror0
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: success() || failure()
     needs: [repos]
     environment: repo.eeems.codes

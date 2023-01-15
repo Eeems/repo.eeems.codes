@@ -248,10 +248,10 @@ def mirror(parser):
     user = main.args.destination.split("@")[0]
     server = main.args.destination.split("@")[1].split(":")[0]
     path = main.args.destination.split("@")[1].split(":")[1]
-    print(t.green(f"  Mirroring to {server}"))
     if "GITHUB_ACTIONS" in os.environ:
         print(f"::group::mirror {server}")
 
+    print(t.green(f"  Mirroring to {server}"))
     env = os.environ.copy()
     env["USER"] = user
     env["SERVER"] = server
