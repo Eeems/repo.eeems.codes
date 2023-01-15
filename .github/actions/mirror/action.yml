@@ -8,6 +8,8 @@ inputs:
     required: true
   key:
     required: true
+  pat:
+    required: true
 runs:
   using: composite
   steps:
@@ -16,7 +18,7 @@ runs:
       with:
         registry: registry.eeems.codes
         username: github
-        password: ${{ secrets.CR_PAT }}
+        password: ${{ inputs.pat }}
     - uses: actions/setup-python@v4
         continue-on-error: true
         with:

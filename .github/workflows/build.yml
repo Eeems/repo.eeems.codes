@@ -204,6 +204,7 @@ jobs:
           user: ${{ vars.SSH_USER }}
           path: ${{ vars.SSH_PATH }}
           key: ${{ secrets.SSH_KEY }}
+          pat: ${{ secrets.CR_PAT }}
   mirror1:
     name: Mirror1
     runs-on: ubuntu-latest
@@ -219,3 +220,4 @@ jobs:
           user: ${{ vars.SSH_USER }}
           path: ${{ vars.SSH_PATH }}
           key: ${{ secrets.SSH_KEY }}
+          pat: ${{ secrets.CR_PAT }}
