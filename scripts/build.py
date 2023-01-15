@@ -288,8 +288,7 @@ def mirror(parser):
         print("::endgroup::")
 
     if not success:
-        print(t.red("  Failed to mirror"))
-        return
+        raise Exception("Mirror update failed")
 
 
 def main(argv):
