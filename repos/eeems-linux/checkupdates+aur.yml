@@ -1,5 +1,10 @@
 - name: perl-smart-comments
+- name: perl-module-install
 - name: perl-www-aur
+  depends:
+    - perl-module-install
+  makedepends:
+    - perl-module-install
 - name: perl-checkupdates-aur
   depends:
     - perl-smart-comments
