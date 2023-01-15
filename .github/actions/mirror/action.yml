@@ -1,0 +1,43 @@
+name: Sync Mirror
+inputs:
+  server:
+    required: true
+  user:
+    required: true
+  path:
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Checkout the Git repository
+      uses: actions/checkout@v3
+    - name: Login to Docker Registry
+      uses: docker/login-action@v2
+      with:
+        registry: registry.eeems.codes
+        username: github
+        password: ${{ secrets.CR_PAT }}
+    - uses: actions/setup-python@v4
+        continue-on-error: true
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+        if: ${{ matrix.runner != 'self-hosted' }}
+        continue-on-error: true
+        with:
+          key: image-registry.eeems.codes/archlinux:latest-{hash}
+          restore-keys: |
+            image-registry.eeems.codes/archlinux:latest-
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        path: repo
+    - name: Rsync
+      run:
+        python -u ./scripts/build.py mirror "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}"
+      env:
+        VERBOSE: 1
+        GITHUB_ACTIONS: 1
+        SSH_KEY: ${{ secrets.SSH_KEY }}

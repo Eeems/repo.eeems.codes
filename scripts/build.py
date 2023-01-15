@@ -143,6 +143,9 @@ def _setup_paths():
     if not os.path.exists("repo"):
         os.mkdir("repo")
 
+    if not os.path.exists("www"):
+        os.mkdir("www")
+
     if "WORKDIR" not in os.environ:
         os.environ["WORKDIR"] = os.path.join(tempfile.gettempdir(), "repo.eeems.codes")
 
@@ -208,10 +211,6 @@ def build(parser):
         default=None,
         nargs="?",
     )
-    parser.add_argument(
-        "--package", help="Build a specific package", nargs="?", default=None
-    )
-    parser.add_argument("--repo", help="Build a repo", default=None)
     yield
     _setup_paths()
     if main.args.type == "repo":
@@ -229,6 +228,67 @@ def pull(parser):
     parser.add_argument("image", help="Image to pull from docker")
     yield
     PackageConfig.pull(main.args.image)
+
+
+@action
+def mirror(parser):
+    parser.add_argument(
+        "destination", help="SSH destination in the following format: user@server:/path"
+    )
+    yield
+    _setup_paths()
+    t = util.term()
+    with os.scandir("repo") as d:
+        if not any(d):
+            print(t.red("  There are no packages"))
+            return
+
+    image = "registry.eeems.codes/archlinux:latest"
+    PackageConfig.pull(image)
+    user = main.args.destination.split("@")[0]
+    server = main.args.destination.split("@")[1].split(":")[0]
+    path = main.args.destination.split("@")[1].split(":")[1]
+    print(t.green(f"  Mirroring to {server}"))
+    if "GITHUB_ACTIONS" in os.environ:
+        print(f"::group::mirror {server}")
+
+    env = os.environ.copy()
+    env["USER"] = user
+    env["SERVER"] = server
+    env["DIR"] = path
+    success = util.run(
+        [
+            "docker",
+            "run",
+            "--workdir=/pkg",
+            f"--mount=type=bind,src={cidirname},dst=/pkg/ci,readonly",
+            f"--mount=type=bind,src={os.path.realpath('repo')},dst=/pkg/repo",
+            f"--mount=type=bind,src={os.path.realpath('www')},dst=/pkg/www",
+            "-e",
+            "GITHUB_ACTIONS",
+            "-e",
+            "VERBOSE",
+            "-e",
+            "USER",
+            "-e",
+            "SERVER",
+            "-e",
+            "DIR",
+            "-e",
+            "SSH_KEY",
+            image,
+            "bash",
+            "ci/scripts/mirror.sh",
+        ],
+        env,
+        chronic="VERBOSE" not in os.environ and "GITHUB_ACTIONS" not in os.environ,
+    )
+    if "GITHUB_ACTIONS" in os.environ:
+        print("::endgroup::")
+
+    if not success:
+        print(t.red("  Failed to mirror"))
+        return
 
 
 def main(argv):

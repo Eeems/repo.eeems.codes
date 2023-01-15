@@ -94,9 +94,6 @@ jobs:
           registry: registry.eeems.codes
           username: github
           password: ${{ secrets.CR_PAT }}
-      - uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
       - uses: actions/setup-python@v4
         continue-on-error: true
         with:
@@ -119,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: packages-${{ matrix.repo }}
+          name: ${{ matrix.repo }}
           path: repo
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
         timeout-minutes: 720
@@ -142,7 +139,7 @@ jobs:
           done
       - uses: actions/upload-artifact@v3
         with:
-          name: packages-${{ matrix.repo }}
+          name: ${{ matrix.repo }}
           path: packages
           if-no-files-found: error
   repos:
@@ -165,7 +162,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: packages-${{ matrix.repo }}
+          name: ${{ matrix.repo }}
           path: repo
       - uses: actions/setup-python@v4
         continue-on-error: true
@@ -189,6 +186,30 @@ jobs:
           REPO_NAME: ${{ matrix.repo }}
       - uses: actions/upload-artifact@v3
         with:
-          name: repo-${{ matrix.repo }}
+          name: ${{ matrix.repo }}
           path: repo
           if-no-files-found: error
+  mirror0:
+    name: Mirror: ${{ matrix.hostname }}
+    runs-on: ubuntu-latest
+    if: success() || failure()
+    needs: [repos]
+    environment: repo.eeems.codes
+    steps:
+      - uses: ./.github/actions/mirror
+        with:
+          server: ${{ vars.SSH_SERVER }}
+          user: ${{ vars.SSH_USER }}
+          path: ${{ vars.SSH_PATH }}
+  mirror1:
+    name: Mirror: ${{ matrix.hostname }}
+    runs-on: ubuntu-latest
+    if: success() || failure()
+    needs: [repos]
+    environment: repo.eeems.website
+    steps:
+      - uses: ./.github/actions/mirror
+        with:
+          server: ${{ vars.SSH_SERVER }}
+          user: ${{ vars.SSH_USER }}
+          path: ${{ vars.SSH_PATH }}
