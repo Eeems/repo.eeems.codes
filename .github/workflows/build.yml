@@ -190,7 +190,7 @@ jobs:
           path: repo
           if-no-files-found: error
   mirror0:
-    name: Mirror: ${{ matrix.hostname }}
+    name: Mirror0
     runs-on: ubuntu-latest
     if: success() || failure()
     needs: [repos]
@@ -202,7 +202,7 @@ jobs:
           user: ${{ vars.SSH_USER }}
           path: ${{ vars.SSH_PATH }}
   mirror1:
-    name: Mirror: ${{ matrix.hostname }}
+    name: Mirror1
     runs-on: ubuntu-latest
     if: success() || failure()
     needs: [repos]
