@@ -196,6 +196,8 @@ jobs:
     needs: [repos]
     environment: repo.eeems.codes
     steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v3
       - uses: ./.github/actions/mirror
         with:
           server: ${{ vars.SSH_SERVER }}
@@ -209,6 +211,8 @@ jobs:
     needs: [repos]
     environment: repo.eeems.website
     steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v3
       - uses: ./.github/actions/mirror
         with:
           server: ${{ vars.SSH_SERVER }}
