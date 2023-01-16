@@ -1,5 +1,0 @@
-# git: https://eeems.codes/Eeems/wxwabbitemu.git
-# depends:
-# - wxgtk-git
-# image: registry.eeems.codes/archlinux:wxgtk
-ignore: true
