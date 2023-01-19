@@ -10,6 +10,9 @@ inputs:
     required: true
   pat:
     required: true
+  cache:
+    required: false
+    default: true
 runs:
   using: composite
   steps:
@@ -27,7 +30,7 @@ runs:
     - run: pip install -r requirements.txt
       shell: bash
     - uses: jpribyl/action-docker-layer-caching@v0.1.1
-      if: ${{ matrix.runner != 'self-hosted' }}
+      if: ${{ inputs.cache }}
       continue-on-error: true
       with:
         key: image-registry.eeems.codes/archlinux:latest-{hash}
