@@ -205,6 +205,7 @@ jobs:
           path: ${{ vars.SSH_PATH }}
           key: ${{ secrets.SSH_KEY }}
           pat: ${{ secrets.CR_PAT }}
+          cache: false
   mirror1:
     name: Mirror1
     runs-on: ubuntu-latest
