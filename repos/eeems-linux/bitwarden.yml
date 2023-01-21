@@ -1,7 +1,10 @@
 - name: bitwarden
-  script: |
-    yay -S --cachedir ./cache --noconfirm electron11
+  depends:
+    - electron11-bin
+  makedepends:
+    - electron11-bin
 - name: bitwarden-cli
   depends:
     - nvm
 - name: nvm
+- name: electron11-bin
