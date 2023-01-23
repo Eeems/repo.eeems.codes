@@ -195,7 +195,7 @@ class Package(BaseConfig):
             args += ["-e", "MAKE_DEPENDS"]
             env["MAKE_DEPENDS"] = ";\n".join(
                 [
-                    "yay -S --cachedir ./cache  --noconfirm " + x
+                    "yay -S --needed --cachedir ./cache  --noconfirm " + x
                     for x in self.makedepends
                 ]
             )
