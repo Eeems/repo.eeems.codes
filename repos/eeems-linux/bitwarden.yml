@@ -1,10 +1,7 @@
 - name: bitwarden
-  depends:
-    - electron11-bin
   makedepends:
-    - electron11-bin
+    - python2-bin
 - name: bitwarden-cli
   depends:
     - nvm
 - name: nvm
-- name: electron11-bin
