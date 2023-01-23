@@ -52,7 +52,7 @@ checkdepends=()
 validpgpkeys=()
 source pkg/PKGBUILD
 deps=( "${depends[@]}" "${makedepends[@]}" "${checkdepends[@]}" )
-deps="${deps[@]}" _chronic bash -c 'pacman --deptest "$deps" | xargs -r yay -S --cachedir ./cache  --noconfirm'
+deps="${deps[@]}" _chronic bash -c 'pacman --deptest $deps | xargs -r yay -S --cachedir ./cache  --noconfirm'
 arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
