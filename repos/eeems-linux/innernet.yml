@@ -1,2 +1,1 @@
-git: ssh://git@git.eeems.codes:3022/Eeems/innernet.git
 image: registry.eeems.codes/archlinux:rust
