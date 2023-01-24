@@ -1,7 +1,0 @@
-- name: bitwarden
-  makedepends:
-    - python2-bin
-- name: bitwarden-cli
-  depends:
-    - nvm
-- name: nvm
