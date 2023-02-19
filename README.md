@@ -1,3 +1,5 @@
 [![build](https://github.com/Eeems/repo.eeems.codes/actions/workflows/build.yml/badge.svg)](https://github.com/Eeems/repo.eeems.codes/actions/workflows/build.yml)
 
-https://repo.eeems.codes
+Build and update https://repo.eeems.codes
+
+Source for the docker images used to generate the packages can be found here: https://github.com/Eeems/images/
