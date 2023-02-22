@@ -72,7 +72,7 @@ class Package(BaseConfig):
 
     @property
     def image(self):
-        return self._data.get("image", "registry.eeems.codes/archlinux:latest")
+        return self._data.get("image", "eeems/archlinux:latest")
 
     @property
     def runner(self):
@@ -251,7 +251,7 @@ class Repo(object):
 
         PackageConfig.repos[name] = self
         self.name = name
-        self.image = "registry.eeems.codes/archlinux:latest"
+        self.image = "eeems/archlinux:latest"
         self.published = False
 
     @property

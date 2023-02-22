@@ -233,7 +233,13 @@ def pull(parser):
 @action
 def mirror(parser):
     parser.add_argument(
-        "destination", help="SSH destination in the following format: user@server:/path"
+        "--image",
+        help="Image to use",
+        default="eeems/archlinux:latest",
+    )
+    parser.add_argument(
+        "destination",
+        help="SSH destination in the following format: user@server:/path",
     )
     yield
     _setup_paths()
@@ -243,7 +249,7 @@ def mirror(parser):
             print(t.red("  There are no packages"))
             return
 
-    image = "registry.eeems.codes/archlinux:latest"
+    image = main.args.image
     PackageConfig.pull(image)
     user = main.args.destination.split("@")[0]
     server = main.args.destination.split("@")[1].split(":")[0]
