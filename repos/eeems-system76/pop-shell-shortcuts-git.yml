@@ -1,2 +1,0 @@
-script: |
-  yay -S --cachedir ./cache --noconfirm libffi
