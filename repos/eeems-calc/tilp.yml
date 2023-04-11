@@ -3,6 +3,8 @@
     - libticalcs
     - gfm
 - name: gfm
+  makedepends:
+    - python2-bin
   depends:
     - libticalcs
     - libglade
