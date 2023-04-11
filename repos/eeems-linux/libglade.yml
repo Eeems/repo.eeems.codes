@@ -2,3 +2,5 @@
 - name: libglade
   makedepends:
     - python2-bin
+  depends:
+    - python2-bin
