@@ -1,4 +1,6 @@
 - name: proton-ge-custom-bin
   depends:
     - xboxdrv
+  makedepends:
+    - pipewire-jack
 - name: xboxdrv
