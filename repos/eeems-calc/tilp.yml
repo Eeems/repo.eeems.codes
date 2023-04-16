@@ -5,6 +5,7 @@
 - name: gfm
   makedepends:
     - python2-bin
+    - glib2
   depends:
     - libticalcs
     - libglade
