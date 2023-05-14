@@ -1,1 +1,2 @@
 image: eeems/archlinux:wayland
+git: https://eeems.codes/Eeems/linux-enable-ir-emitter-git.git
