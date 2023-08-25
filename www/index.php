@@ -138,7 +138,7 @@
           <section>
             <h3 id="package-<?=$pkgname?>">
               <?=$pkgname?>
-              <a href="#package-<?=$pkgname?>">⚓</a>
+              <sup><a href="#package-<?=$pkgname?>">⚓</a></sup>
             </h3>
             <aside>
               <table>
@@ -172,9 +172,7 @@
                 <?php if(has($metadata, 'url')){ ?>
                   <a href="<?=get($metadata, 'url')?>">Website</a>
                 <?php } ?>
-                <?php if($filename){ ?>
-                  <a href="<?=$name.'/'.$filename?>">Download</a>
-                <?php } ?>
+                <a href="<?=name?>/<?=$file?>">📥 Download</a>
               </sub>
             </p>
             <p>
