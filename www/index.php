@@ -176,7 +176,10 @@
                   <a href="<?=get($metadata, 'url')?>">🌐 Website</a>
                   <br/>
                 <?php } ?>
-                <a href="<?=name?>/<?=$file?>">📥 Download</a>
+                <?php $filename = get($metadata, 'filename'); ?>
+                <?php if($filename){ ?>
+                  <a href="<?=$name?>/<?=$filename?>">📥 Download</a>
+                <?php } ?>
               </sub>
             </p>
           </section>
