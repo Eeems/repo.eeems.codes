@@ -163,6 +163,9 @@
               </table>
             </aside>
             <p>
+              <?=get($metadata, 'desc')?>
+            </p>
+            <p>
               <sub>
                 <b>Version</b>: <?=get($metadata, 'version')?>
                 <?php $license = get($metadata, 'license') ?>
@@ -170,13 +173,11 @@
                 <b>Architecture</b>: <?=get($metadata, 'arch')?>
                 <br/>
                 <?php if(has($metadata, 'url')){ ?>
-                  <a href="<?=get($metadata, 'url')?>">Website</a>
+                  <a href="<?=get($metadata, 'url')?>">🌐 Website</a>
+                  <br/>
                 <?php } ?>
                 <a href="<?=name?>/<?=$file?>">📥 Download</a>
               </sub>
-            </p>
-            <p>
-              <?=get($metadata, 'desc')?>
             </p>
           </section>
         <?php } ?>
