@@ -1,12 +1,12 @@
 - name: waydroid
   depends:
-   - python-gbinder
-   - python-pyclip
- - name: python-gbinder
-   depends:
+    - python-gbinder
+    - python-pyclip
+- name: python-gbinder
+  depends:
     - libgbinder
- - name: python-pyclip
- - name: libgbinder
-   depends:
-     - libglibutil
- - name: libglibutil
+- name: python-pyclip
+- name: libgbinder
+  depends:
+    - libglibutil
+- name: libglibutil
