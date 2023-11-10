@@ -11,5 +11,6 @@
     - libglibutil
 - name: libglibutil
 - name: waydroid-image-gapps
-  depends: waydroid
+  depends:
+    - waydroid
 - name: binder_linux-dkms
