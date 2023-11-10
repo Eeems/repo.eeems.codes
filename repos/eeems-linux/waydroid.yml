@@ -10,3 +10,5 @@
   depends:
     - libglibutil
 - name: libglibutil
+- name: waydroid-image-gapps
+  depends: waydroid
