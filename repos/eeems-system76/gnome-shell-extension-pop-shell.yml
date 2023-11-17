@@ -1,0 +1,12 @@
+- name: gnome-shell-extension-pop-shell
+  depends:
+    - pop-launcher
+    - pop-shell-plugin-system76-power
+- name: pop-launcher
+  depends:
+    - system76-power
+- name: pop-shell-plugin-system76-power
+  depends:
+    - system76-io-dkms
+    - system76-acpi-dkms
+    - system76-dkms
