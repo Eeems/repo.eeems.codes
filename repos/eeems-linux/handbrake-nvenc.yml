@@ -1,3 +1,4 @@
 - name: handbrake-nvenc
 - name: handbrake-nvenc-cli
-  depends: handbrake-nvenc
+  depends:
+    - handbrake-nvenc
