@@ -113,7 +113,7 @@ jobs:
           restore-keys: |
             image-${{ matrix.image }}-
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         continue-on-error: true
         with:
           name: ${{ matrix.repo }}
@@ -160,7 +160,7 @@ jobs:
           username: github
           password: ${{ secrets.CR_PAT }}
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.repo }}
           path: repo
