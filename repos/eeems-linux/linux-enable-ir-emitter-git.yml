@@ -4,3 +4,4 @@ makedepends:
   - jsoncpp
   - cmake
   - gtk3
+  - yaml-cpp
