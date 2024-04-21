@@ -17,12 +17,12 @@ runs:
   using: composite
   steps:
     - name: Login to Docker Registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: registry.eeems.codes
         username: github
         password: ${{ inputs.pat }}
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       continue-on-error: true
       with:
         python-version: '3.11'
