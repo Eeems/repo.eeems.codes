@@ -3,3 +3,4 @@ makedepends:
   - vtk
   - jsoncpp
   - cmake
+  - gtk3
