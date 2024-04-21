@@ -1,4 +1,0 @@
-- name: pi-hole-server
-  depends:
-    - pi-hole-ftl
-- name: pi-hole-ftl
