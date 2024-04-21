@@ -1,0 +1,4 @@
+- name: checkupdates-with-aur
+  depends:
+    - checkupdates-with-aur
+- name: aurutils
