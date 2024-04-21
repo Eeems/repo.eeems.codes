@@ -1,4 +1,1 @@
-- name: bcompare
-- name: bcompare-nautilus
-  depends:
-   - bcompare
+
