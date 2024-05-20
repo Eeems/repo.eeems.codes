@@ -59,12 +59,12 @@ arraylength=${#validpgpkeys[@]}
 if [ $arraylength != 0 ];then
   log "Getting PGP keys..."
   for (( i=0; i<${arraylength}; i++ ));do
-    _chronic { gpg --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver pool.sks-keyservers.net --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver keyserver.ubuntu.com --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver pgp.mit.edu --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver keyserver.pgp.com --recv-key "${validpgpkeys[$i]}" ||
-      gpg --keyserver keys.openpgp.org --recv-key "${validpgpkeys[$i]}" }
+    _chronic gpg --recv-key "${validpgpkeys[$i]}" \
+    || _chronic gpg --keyserver pool.sks-keyservers.net --recv-key "${validpgpkeys[$i]}" \
+    || _chronic gpg --keyserver keyserver.ubuntu.com --recv-key "${validpgpkeys[$i]}" \
+    || _chronic gpg --keyserver pgp.mit.edu --recv-key "${validpgpkeys[$i]}" \
+    || _chronic gpg --keyserver keyserver.pgp.com --recv-key "${validpgpkeys[$i]}" \
+    || _chronic gpg --keyserver keys.openpgp.org --recv-key "${validpgpkeys[$i]}"
   done
 fi
 pushd pkg > /dev/null
