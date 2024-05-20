@@ -99,7 +99,7 @@
           <li>
             Install full keychain
             <pre><?php
-              echo "sudo pacman -U <a href=\"https://repo.eeems.codes/eeems-linux/eeems-keyring-20220620-1-any.pkg.tar.zst\">https://repo.eeems.codes/eeems-linux/eeems-keyring-20220620-1-any.pkg.tar.zst</a>";
+              echo "sudo pacman -U <a href=\"https://repo.eeems.codes/eeems-linux/eeems-keyring-20240520-1-any.pkg.tar.zst\">https://repo.eeems.codes/eeems-linux/eeems-keyring-20240520-1-any.pkg.tar.zst</a>";
             ?></pre>
           </li>
           <li>
