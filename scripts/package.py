@@ -292,8 +292,7 @@ class Repo(object):
 
         with os.scandir("repo") as d:
             if not any(d):
-                print(t.red("  There are no packages"))
-                return
+                print(t.yellow("  There are no packages"))
 
         PackageConfig.pull(self.image)
         cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
