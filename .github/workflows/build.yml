@@ -161,6 +161,7 @@ jobs:
           password: ${{ secrets.CR_PAT }}
       - name: Download artifact
         uses: actions/download-artifact@v3
+        continue-on-error: true
         with:
           name: ${{ matrix.repo }}
           path: repo

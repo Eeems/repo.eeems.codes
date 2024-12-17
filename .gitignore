@@ -5,3 +5,4 @@ repo/
 workdir/
 .secrets
 .keyring
+.venv/
