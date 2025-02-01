@@ -116,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: ${{ matrix.repo }}-*
+          pattern: package-${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
@@ -140,7 +140,7 @@ jobs:
           done
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.repo }}-${{ matrix.package }}
+          name: package-${{ matrix.repo }}-${{ matrix.package }}
           path: packages/
           if-no-files-found: error
   repos:
@@ -164,7 +164,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: ${{ matrix.repo }}-*
+          pattern: package-${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - uses: actions/setup-python@v5
@@ -189,7 +189,7 @@ jobs:
           REPO_NAME: ${{ matrix.repo }}
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.repo }}
+          name: repo-${{ matrix.repo }}
           path: repo
           if-no-files-found: error
   mirror0:
