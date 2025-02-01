@@ -116,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: ${{ matrix.repo }}
+          name: ${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
@@ -138,10 +138,10 @@ jobs:
               sudo mv "$file" "${file/:/_}"
             fi
           done
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.repo }}
-          path: packages
+          name: ${{ matrix.repo }}-${{ matrix.package }}
+          path: packages/
           if-no-files-found: error
   repos:
     name: Repo ${{ matrix.repo }}
@@ -164,7 +164,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: ${{ matrix.repo }}
+          name: ${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - uses: actions/setup-python@v5
@@ -187,7 +187,7 @@ jobs:
           GPGKEY: ${{ secrets.GPGKEY }}
           GPG_PRIVKEY: ${{ secrets.GPG_PRIVKEY }}
           REPO_NAME: ${{ matrix.repo }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.repo }}
           path: repo
