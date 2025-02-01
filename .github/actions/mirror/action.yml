@@ -40,6 +40,7 @@ runs:
       uses: actions/download-artifact@v4
       with:
         path: repo
+        pattern: repo-*
         merge-multiple: true
     - name: Rsync
       if: ${{ matrix.runner != 'self-hosted' }}
