@@ -37,9 +37,10 @@ runs:
         restore-keys: |
           image-eeems/archlinux:latest-
     - name: Download artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: repo
+        merge-multiple: true
     - name: Rsync
       if: ${{ matrix.runner != 'self-hosted' }}
       run: python -u ./scripts/build.py mirror "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}"
