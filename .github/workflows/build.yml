@@ -116,7 +116,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: ${{ matrix.repo }}-*
+          pattern: ${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - name: Build ${{ matrix.repo }}/${{ matrix.package }}
@@ -164,7 +164,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: ${{ matrix.repo }}-*
+          pattern: ${{ matrix.repo }}-*
           path: repo
           merge-multiple: true
       - uses: actions/setup-python@v5
