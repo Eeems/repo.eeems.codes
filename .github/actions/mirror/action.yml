@@ -41,7 +41,12 @@ runs:
       with:
         path: repo
         pattern: repo-*
-        merge-multiple: true
+        merge-multiple: false
+    - name: Fix names
+      run: |
+        find repo -maxdepth 1 -type d -name 'repo-*' -printf '%f\n' | while read -r repo; do
+          mv repo/$repo repo/$(echo $repo | cut -d - -f 2-)
+        done
     - name: Rsync
       if: ${{ matrix.runner != 'self-hosted' }}
       run: python -u ./scripts/build.py mirror "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}"
