@@ -43,6 +43,7 @@ runs:
         pattern: repo-*
         merge-multiple: false
     - name: Fix names
+      shell: bash
       run: |
         find repo -maxdepth 1 -type d -name 'repo-*' -printf '%f\n' | while read -r repo; do
           mv repo/$repo repo/$(echo $repo | cut -d - -f 2-)
