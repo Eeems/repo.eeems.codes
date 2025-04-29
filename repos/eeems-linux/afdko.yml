@@ -1,66 +1,10 @@
 - name: afdko
   depends:
-    - python-booleanoperations
-    - python-fontmath
-    - python-fontparts
-    - python-fontpens
-    - python-ufoprocessor
-    - python-fonttools-git
     - psautohint
   script: |
     yay -S --cachedir ./cache --noconfirm python-pip ninja
     git config --global url.https://github.com/.insteadOf git://github.com/
 - name: psautohint
-  depends:
-    - python-fonttools-git
   script: |
     yay -S --cachedir ./cache --noconfirm python-pip
-- name: python-fonttools-git
-- name: python-defcon
-  depends:
-    - python-fontpens
-    - python-fonttools-git
-- name: python-fontmath
-  script: |
-    yay -S --cachedir ./cache --noconfirm python-pip
-  depends:
-    - python-fonttools-git
-- name: python-booleanoperations
-  depends:
-    - python-fonttools-git
-    - python-defcon
-    - python-fontpens
-- name: python-fontparts
-  script: |
-    yay -S --cachedir ./cache --noconfirm python-pip
-  depends:
-    - python-booleanoperations
-    - python-defcon
-    - python-fontpens
-    - python-fontmath
-    - python-fonttools-git
-- name: python-fontpens
-  script: |
-    cd cache
-    yay -Sy
-    ls python-fontparts-*.pkg.tar.zst python-booleanoperations-*.pkg.tar.zst python-defcon-*.pkg.tar.zst python-fontpens-*.pkg.tar.zst | while read pkg;do
-      echo "Installing $pkg"
-      yay -U $pkg || sudo rm $pkg
-    done
-  depends:
-    # Avoid recursion
-    # - python-fontparts
-    - python-fontmath
-    - python-fonttools-git
-- name: python-mutatormath
-  script: |
-    yay -S --cachedir ./cache --noconfirm python-pip
-  depends:
-    - python-defcon
-    - python-fontmath
-    - python-fonttools-git
 - name: python-ufonormalizer
-- name: python-ufoprocessor
-  depends:
-    - python-mutatormath
-    - python-fontparts
