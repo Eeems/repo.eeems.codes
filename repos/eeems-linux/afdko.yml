@@ -7,4 +7,3 @@
 - name: psautohint
   script: |
     yay -S --cachedir ./cache --noconfirm python-pip
-- name: python-ufonormalizer
