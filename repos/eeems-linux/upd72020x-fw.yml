@@ -1,2 +1,1 @@
-script: |
-  sed -i 's|denisandroid|mahatmus-tech|' pkg/PKGBUILD
+
