@@ -263,6 +263,7 @@ def mirror(parser):
     env["USER"] = user
     env["SERVER"] = server
     env["DIR"] = path
+    env["SSH_ARGS"] = main.args.ssh
     cidirname = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     success = util.run(
         [
@@ -287,7 +288,6 @@ def mirror(parser):
             image,
             "-e",
             "SSH_ARGS",
-            main.args.ssh,
             "bash",
             "ci/scripts/mirror.sh",
         ],
