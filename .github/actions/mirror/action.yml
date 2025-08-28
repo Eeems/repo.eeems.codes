@@ -1,16 +1,26 @@
 name: Sync Mirror
+description: Sync Mirror
 inputs:
   server:
+    description: Server to mirror to
     required: true
   user:
+    description: User to connect to server as
     required: true
   path:
+    description: Path to put the mirror
     required: true
   key:
+    description: SSH key to use
     required: true
   pat:
+    description: GitHub PAT
     required: true
+  ssh:
+    description: Extra args to pass to ssh
+    required: false
   cache:
+    description: If docker layer caching should be used when mirroring
     required: false
     default: true
 runs:
@@ -25,8 +35,8 @@ runs:
     - uses: actions/setup-python@v5
       continue-on-error: true
       with:
-        python-version: '3.11'
-        cache: 'pip'
+        python-version: "3.11"
+        cache: "pip"
     - run: pip install -r requirements.txt
       shell: bash
     - uses: jpribyl/action-docker-layer-caching@v0.1.1
@@ -58,7 +68,7 @@ runs:
         SSH_KEY: ${{ inputs.key }}
     - name: Rsync self-hosted
       if: ${{ matrix.runner == 'self-hosted' }}
-      run: python -u ./scripts/build.py mirror --image "registry.eeems.codes/archlinux:latest" "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}"
+      run: python -u ./scripts/build.py mirror --image "registry.eeems.codes/archlinux:latest" "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}" --ssh ${{ inputs.ssh }}
       shell: bash
       env:
         VERBOSE: 1

@@ -232,15 +232,16 @@ def pull(parser):
 
 @action
 def mirror(parser):
-    parser.add_argument(
+    _ = parser.add_argument(
         "--image",
         help="Image to use",
         default="eeems/archlinux:latest",
     )
-    parser.add_argument(
+    _ = parser.add_argument(
         "destination",
         help="SSH destination in the following format: user@server:/path",
     )
+    _ = parser.add_argument("--ssh", help="Extra args to pass to ssh", default="")
     yield
     _setup_paths()
     t = util.term()
@@ -284,6 +285,9 @@ def mirror(parser):
             "-e",
             "SSH_KEY",
             image,
+            "-e",
+            "SSH_ARGS",
+            main.args.ssh,
             "bash",
             "ci/scripts/mirror.sh",
         ],
