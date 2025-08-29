@@ -60,7 +60,7 @@ runs:
         done
     - name: Rsync
       if: ${{ matrix.runner != 'self-hosted' }}
-      run: python -u ./scripts/build.py mirror "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}" --ssh ${{ inputs.ssh }}
+      run: python -u ./scripts/build.py mirror "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}" --ssh "${{ inputs.ssh }}"
       shell: bash
       env:
         VERBOSE: 1
@@ -68,7 +68,7 @@ runs:
         SSH_KEY: ${{ inputs.key }}
     - name: Rsync self-hosted
       if: ${{ matrix.runner == 'self-hosted' }}
-      run: python -u ./scripts/build.py mirror --image "registry.eeems.codes/archlinux:latest" "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}" --ssh ${{ inputs.ssh }}
+      run: python -u ./scripts/build.py mirror --image "registry.eeems.codes/archlinux:latest" "${{ inputs.user }}@${{ inputs.server }}:${{ inputs.path }}" --ssh "${{ inputs.ssh }}"
       shell: bash
       env:
         VERBOSE: 1
