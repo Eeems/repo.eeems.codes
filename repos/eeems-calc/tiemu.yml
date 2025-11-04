@@ -1,8 +1,0 @@
-makedepends:
-  - python2-bin
-  - glib2
-depends:
-  - libticalcs
-  - libglade
-script: |
-  sudo sed -i 's|-Werror=format-security||g' /etc/makepkg.conf
