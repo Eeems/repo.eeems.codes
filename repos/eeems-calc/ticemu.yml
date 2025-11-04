@@ -1,4 +1,0 @@
-- name: ticemu
-  script: |
-    sudo sed -i 's|-Werror=format-security||g' /etc/makepkg.conf
-- name: ticemu-git
