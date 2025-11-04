@@ -1,2 +1,0 @@
-script: |
-  sed -i 's`make official`echo "#include <strings.h>" | cat - libui-ng/unix/text.c | tee libui-ng/unix/text.c >/dev/null;echo "#include <sys/stat.h>" | cat - tray/zt_desktop_tray.c | tee tray/zt_desktop_tray.c >/dev/null;make official`' pkg/PKGBUILD
