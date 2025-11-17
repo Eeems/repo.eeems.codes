@@ -52,7 +52,7 @@ class Package(BaseConfig):
 
     @property
     def git(self):
-        return self._data.get("git", f"https://aur.archlinux.org/{self.name}.git")
+        return self._data.get("git", f"https://github.com/archlinux/aur.git")
 
     @property
     def branch(self):
@@ -136,11 +136,17 @@ class Package(BaseConfig):
         if self.branch is not None:
             args = ["-b", self.branch]
 
+        if self.git == "https://github.com/archlinux/aur.git":
+            args += ["--branch", self.name, "--single-branch"]
+
+        else:
+            args.append("--depth=1")
+
         if "GITHUB_ACTIONS" in os.environ:
             print(f"::group::git checkout {self.git}")
 
         success = util.run(
-            ["git", "clone", "--depth=1"] + args + [self.git, tmpdirname],
+            ["git", "clone"] + args + [self.git, tmpdirname],
             env,
             chronic="VERBOSE" not in os.environ and "GITHUB_ACTIONS" not in os.environ,
         )
@@ -430,3 +436,4 @@ class PackageConfig(BaseConfig):
             return
 
         PackageConfig.pulled_images.append(image)
+
