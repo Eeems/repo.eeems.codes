@@ -74,7 +74,8 @@ if ! namcap -i PKGBUILD;then
   debug "$(cat PKGBUILD)"
 fi
 log "Building package..."
-_chronic SOURCE_DATE_EPOCH=0 makepkg -f --noconfirm
+export SOURCE_DATE_EPOCH=0
+_chronic makepkg -f --noconfirm
 if [[ "x$CLEANUP_SCRIPT" != "x" ]];then
   log "Running cleanup script..."
   pushd . > /dev/null
