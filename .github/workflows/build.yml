@@ -64,13 +64,6 @@ jobs:
           python-version: "3.11"
           cache: "pip"
       - run: pip install -r requirements.txt
-      - uses: jpribyl/action-docker-layer-caching@v0.1.1
-        if: ${{ matrix.runner != 'self-hosted' }}
-        continue-on-error: true
-        with:
-          key: image-${{ matrix.image }}-{hash}
-          restore-keys: |
-            image-${{ matrix.image }}-
       - name: Image ${{ matrix.image }}
         run: |
           python -u ./scripts/build.py --repos-dir repos pull ${{ matrix.image }}
@@ -105,13 +98,6 @@ jobs:
         with:
           path: cache
           key: ${{ runner.os }}
-      - uses: jpribyl/action-docker-layer-caching@v0.1.1
-        if: ${{ matrix.runner != 'self-hosted' }}
-        continue-on-error: true
-        with:
-          key: image-${{ matrix.image }}-{hash}
-          restore-keys: |
-            image-${{ matrix.image }}-
       - name: Download artifact
         uses: actions/download-artifact@v8
         continue-on-error: true
@@ -173,13 +159,6 @@ jobs:
           python-version: "3.11"
           cache: "pip"
       - run: pip install -r requirements.txt
-      - uses: jpribyl/action-docker-layer-caching@v0.1.1
-        if: ${{ matrix.runner != 'self-hosted' }}
-        continue-on-error: true
-        with:
-          key: image-${{ matrix.image }}-{hash}
-          restore-keys: |
-            image-${{ matrix.image }}-
       - name: Repo ${{ matrix.repo }}
         run: |
           python -u ./scripts/build.py --repos-dir repos publish ${{ matrix.repo }}
