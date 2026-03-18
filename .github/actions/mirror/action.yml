@@ -27,12 +27,12 @@ runs:
   using: composite
   steps:
     - name: Login to Docker Registry
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         registry: registry.eeems.codes
         username: github
         password: ${{ inputs.pat }}
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v6
       continue-on-error: true
       with:
         python-version: "3.11"
@@ -47,7 +47,7 @@ runs:
         restore-keys: |
           image-eeems/archlinux:latest-
     - name: Download artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: repo
         pattern: repo-*
