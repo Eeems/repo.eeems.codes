@@ -39,13 +39,6 @@ runs:
         cache: "pip"
     - run: pip install -r requirements.txt
       shell: bash
-    - uses: jpribyl/action-docker-layer-caching@v0.1.1
-      if: ${{ inputs.cache && inputs.cache != 'false' }}
-      continue-on-error: true
-      with:
-        key: image-eeems/archlinux:latest-{hash}
-        restore-keys: |
-          image-eeems/archlinux:latest-
     - name: Download artifact
       uses: actions/download-artifact@v8
       with:
