@@ -1,9 +1,9 @@
 - name: proton-ge-custom-bin
   depends:
     - xboxdrv
-    - lib32-gst-plugins-base-libs
+    - lib32-gst-plugins-base
 - name: xboxdrv
 - name: lib32-sdl2
-- name: lib32-gst-plugins-base-libs
+- name: lib32-gst-plugins-base
   depends:
     - lib32-sdl2
