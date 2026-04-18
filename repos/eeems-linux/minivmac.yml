@@ -1,2 +1,4 @@
 - name: minivmac
+  script: |
+    sed -i 's|OPTIONS|options|' PKGBUILD
 - name: minivmacii
