@@ -1,3 +1,0 @@
-image: eeems/archlinux:gnome
-depends:
-  - system76-power
