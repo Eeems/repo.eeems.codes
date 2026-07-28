@@ -45,7 +45,8 @@ GPGKEY="$(gpg \
   | grep '^sec:' \
   | cut \
     --delimiter ':' \
-    --fields 5)"
+    --fields 5 \
+  | head -n1)"
 SSH_KEY="$(cat ~/.ssh/id_rsa)"
 GPG_PRIVKEY="$(gpg \
   --no-default-keyring \
