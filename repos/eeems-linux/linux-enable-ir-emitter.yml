@@ -1,7 +1,0 @@
-image: eeems/archlinux:wayland
-makedepends:
-  - vtk
-  - jsoncpp
-  - cmake
-  - gtk3
-  - yaml-cpp
