@@ -6,3 +6,4 @@ workdir/
 .secrets
 .keyring
 .venv/
+.pi/
