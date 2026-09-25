@@ -3,8 +3,17 @@
     - libticalcs
     - gfm
 - name: gfm
-  makedepends:
-    - glib2
   depends:
     - libticalcs
     - libglade
+    - gtk2
+- name: python2-bin
+- name: libglade
+  makedepends:
+    - python2-bin
+    - glib2
+  depends:
+    - python2-bin
+    - gtk2
+- name: gtk2
+  image: eeems/archlinux:gnome
