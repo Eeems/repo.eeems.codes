@@ -3,6 +3,8 @@
     - libticalcs
     - gfm
 - name: gfm
+  makedepends:
+    - gtk2
   depends:
     - libticalcs
     - libglade
