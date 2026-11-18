@@ -1,0 +1,2 @@
+script: |
+  sed -i "s|github.com/TheTumultuousUnicornOfDarkness/AUR-packages/raw/master/files/$_realname-$pkgver-usb.zip|www.memtest86.com/downloads/memtest86-usb.zip|" pkg/PKGBUILD
